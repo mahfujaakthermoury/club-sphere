@@ -15,7 +15,7 @@ import MyProfile from "../Layouts/Dashboard/MyProfile/MyProfile";
 import Dashboard from "../Layouts/Dashboard/Dashboard";
 import DashboardHome from "../Layouts/Dashboard/DashboardHome/DashboardHome";
 import AddClubs from "../Layouts/Dashboard/Moderator/AddClubs/AddClubs";
-import ManageClubs from "../Layouts/Dashboard/Moderator/ManageClubs/ManageClubs";
+import ManageClubs from "../Layouts/Dashboard/Admin/ManageClubs/ManageClubs";
 import ManageUsers from "../Layouts/Dashboard/Admin/ManageUsers/ManageUsers";
 import Analytics from "../Layouts/Dashboard/Admin/Analytics/Analytics";
 import ManageAppliedApplications from "../Layouts/Dashboard/Moderator/ManageAppliedApplications/ManageAppliedApplications";
@@ -24,7 +24,7 @@ import MyApplications from "../Layouts/Dashboard/Member/MyApplications/MyApplica
 import MyReviews from "../Layouts/Dashboard/Member/MyReviews/MyReviews";
 import EditApplication from "../Layouts/Dashboard/Member/EditApplication/EditApplication";
 import App from "../App";
-import UpdateClub from "../Layouts/Dashboard/Admin/UpdateClub/UpdateClub";
+import UpdateClub from "../Layouts/Dashboard/Moderator/UpdateClub/UpdateClub";
 import IsLoginUser from "./Validation/IsLoginUser";
 import IsAdmin from "./Validation/IsAdmin";
 import IsModerator from "./Validation/IsModerator";
@@ -123,14 +123,6 @@ const WebRouter = () => {
             },
             // admin
             {
-              path: "/dashboard/update-club/:id",
-              element: (
-                <IsAdmin>
-                  <UpdateClub></UpdateClub>
-                </IsAdmin>
-              ),
-            },
-            {
               path: "/dashboard/manage-users",
               element: (
                 <IsAdmin>
@@ -155,11 +147,19 @@ const WebRouter = () => {
                 </IsModerator>
               ),
             },
-            {
+                                    {
               path: "/dashboard/manage-clubs",
               element: (
                 <IsModerator>
                   <ManageClubs></ManageClubs>
+                </IsModerator>
+              ),
+            },
+             {
+              path: "/dashboard/update-club/:id",
+              element: (
+                <IsModerator>
+                  <UpdateClub></UpdateClub>
                 </IsModerator>
               ),
             },

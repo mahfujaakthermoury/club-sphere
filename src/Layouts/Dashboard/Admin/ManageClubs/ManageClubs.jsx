@@ -71,28 +71,20 @@ const ManageClubs = () => {
       ),
     }),
 
-    columnHelper.accessor("universityImage", {
-      header: "University",
+    columnHelper.accessor("clubImage", {
+      header: "Clubs",
       cell: (info) => (
         <div className="flex items-center gap-3">
           <img
             src={info.getValue()}
             className="h-10 w-10 rounded-xl object-cover ring-2 ring-sky-500/20"
           />
-          <div className="flex flex-col">
-            <span className="font-bold text-xs lg:text-sm truncate max-w-[120px]">
-              {info.row.original.universityName}
-            </span>
-            <span className="text-[10px] opacity-50 uppercase font-black">
-              {info.row.original.universityCountry}
-            </span>
-          </div>
         </div>
       ),
     }),
 
     columnHelper.accessor("clubName", {
-      header: "club",
+      header: "Club Name",
       cell: (info) => (
         <span
           className="lg:max-w-40 truncate block font-medium"
@@ -112,7 +104,7 @@ const ManageClubs = () => {
       ),
     }),
 
-    columnHelper.accessor("clubCategory", {
+    columnHelper.accessor("category", {
       header: "Category",
       cell: (info) => (
         <span className="text-xs font-bold opacity-70 italic">

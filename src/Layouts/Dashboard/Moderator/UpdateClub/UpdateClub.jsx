@@ -35,7 +35,7 @@ const Updateclub = () => {
       const f = e.target;
       const payload = {
         clubName: f.clubName.value.trim(),
-        universityName: f.universityName.value.trim(),
+        description: f.description.value.trim(),
         universityImage: f.universityImageUrl.value.trim(),
         universityCountry: f.universityCountry.value.trim(),
         universityCity: f.universityCity.value.trim(),
@@ -72,11 +72,10 @@ const Updateclub = () => {
       </div>
     );
 
-  const inputClass = `w-full px-4 py-3 rounded-2xl border outline-none transition-all ${
-    theme === "dark"
+  const inputClass = `w-full px-4 py-3 rounded-2xl border outline-none transition-all ${theme === "dark"
       ? "bg-slate-900 border-slate-800 text-white focus:border-sky-500"
       : "bg-gray-50 border-gray-200 text-slate-700 focus:border-sky-500 focus:bg-white"
-  }`;
+    }`;
 
   const labelClass =
     "text-xs font-black uppercase tracking-widest opacity-60 mb-2 block ml-1";
@@ -98,9 +97,8 @@ const Updateclub = () => {
           </button>
           <div>
             <h2
-              className={`md:text-3xl text-2xl font-black tracking-tight ${
-                theme === "dark" ? "text-white" : "text-slate-900"
-              }`}
+              className={`md:text-3xl text-2xl font-black tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+                }`}
             >
               Update club
             </h2>
@@ -114,11 +112,10 @@ const Updateclub = () => {
 
       <form
         onSubmit={handleSubmit}
-        className={`sm:p-8 p-4 rounded-4xl border ${
-          theme === "dark"
+        className={`sm:p-8 p-4 rounded-4xl border ${theme === "dark"
             ? "bg-slate-900/50 border-slate-800 shadow-2xl shadow-black/20"
             : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
-        }`}
+          }`}
       >
         <div className="grid gap-6">
           {/* Section 1: Basic Info */}
@@ -316,11 +313,10 @@ const Updateclub = () => {
           <button
             type="submit"
             disabled={submitting}
-            className={`mt-6 w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-xl ${
-              submitting
+            className={`mt-6 w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-xl ${submitting
                 ? "bg-slate-500 opacity-50 cursor-not-allowed"
                 : "bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/20 active:scale-[0.98]"
-            }`}
+              }`}
           >
             {submitting ? "Updating Database..." : "Update club Data"}
           </button>
