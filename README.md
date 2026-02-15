@@ -7,11 +7,11 @@ This project demonstrates real-world full-stack architecture, secure authenticat
 
 🚀 Live Application
 
-🔗 Live Site: https://your-live-link.com
+🔗 Live Site: https://lustrous-sherbet-1d11fb.netlify.app/
 
-🔗 Client Repository: https://github.com/your-username/client-repo
+🔗 Client Repository: https://github.com/mahfujaakthermoury/club-sphere
 
-🔗 Server Repository: https://github.com/your-username/server-repo
+🔗 Server Repository: https://github.com/mahfujaakthermoury/club-sphere-server
 
 🎯 Project Purpose
 
@@ -260,13 +260,13 @@ STRIPE_SECRET_KEY=
 
 👨‍💼 Admin Testing Credentials
 
-Email: admin@example.com
+Email: admin@gmail.com
 
-Password: 123456Aa
+Password: Admin@12345
 
 📦 Installation & Local Setup
 # Clone repository
-git clone https://github.com/your-username/project-name.git
+git clone https://github.com/mahfujaakthermoury/club-sphere
 
 # Install dependencies
 npm install
