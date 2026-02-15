@@ -130,7 +130,7 @@ const FAQSection = () => {
         </div>
       </div>
       {/* CTA Banner */}
-      <div className={` w-full mt-15 py-12 rounded-3xl text-center ${theme === "dark" ? "bg-[#cd974c] text-slate-900" : "bg-[#682626] text-white"}`}>
+      <div className={` w-full mt-15  py-12   rounded-3xl text-center ${theme === "dark" ? "bg-[#cd974c] text-slate-900" : "bg-[#682626] text-white"}`}>
         <h2 className="text-3xl font-bold mb-4">Ready to join a club?</h2>
         <p className="mb-6">Sign up today and start exploring the perfect community for you!</p>
         <button   onClick={handleClick}
