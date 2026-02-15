@@ -29,6 +29,7 @@ import IsLoginUser from "./Validation/IsLoginUser";
 import IsAdmin from "./Validation/IsAdmin";
 import IsModerator from "./Validation/IsModerator";
 import IsMember from "./Validation/IsMember";
+import AllEvents from "../Layouts/Main/AllEvents/AllEvents";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -48,6 +49,10 @@ const WebRouter = () => {
             {
               path: "/all-clubs",
               element: <AllClubs></AllClubs>,
+            },
+             {
+              path: "/all-events",
+              element: <AllEvents></AllEvents>,
             },
             {
               path: "/about",
