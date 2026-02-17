@@ -45,7 +45,8 @@ const SideNav = ({ role }) => {
 
   const moderatorLinks = [
     { to: "/dashboard/add", label: "Add club", icon: <MdAddBox /> },
-     {
+    { to: "/dashboard/addEvent", label: "Add Event", icon: <MdAddBox /> },
+    {
       to: "/dashboard/manage-clubs",
       label: "Manage clubs",
       icon: <FiFileText />,

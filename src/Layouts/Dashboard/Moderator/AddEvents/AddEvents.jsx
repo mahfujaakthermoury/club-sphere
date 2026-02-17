@@ -1,6 +1,6 @@
 
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
+//import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import WebContext from "../../../../Context/WebContext";
 import useAxiosSecure from "../../../../Hook/useAxiosSecure";
@@ -12,11 +12,11 @@ const image_API = `https://api.imgbb.com/1/upload?key=${
   import.meta.env.VITE_IMG_HOSTING_API
 }`;
 
-const AddClubs = () => {
+const AddEvents = () => {
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
   const { user, theme } = useContext(WebContext);
-  const navigate = useNavigate();
+ // const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
 
   const hostImage = async (file) => {
@@ -52,21 +52,23 @@ const AddClubs = () => {
       }
 
       const payload = {
-        clubName: f.clubName.value,
+        eventName: f.eventName.value,
         description: f.description.value,
         category: f.category.value,
         location: f.location.value,
-        clubImage: finalImage,
-        membershipFee: Number(f.membershipFee.value),
+        eventImage: finalImage,
+        eventFee: Number(f.eventFee.value),
         status: "pending",
-        managerEmail: user?.email,
+        moderatorEmail: user?.email,
         createdAt: new Date().toISOString(),
       };
 
-      const res = await axiosSecure.post("/clubs", payload );
+      const res = await axiosSecure.post("/events", payload);
+      console.log("EVENT POST RESPONSE:", res.data);
+
       if (res.data.insertedId) {
-        toast.success("Club added successfully!");
-        navigate("/dashboard/manage-clubs");
+        toast.success("Event added successfully!");
+       // navigate("/dashboard/manage-clubs");
       }
     } catch (err) {
       toast.error(err.message);
@@ -88,7 +90,7 @@ const AddClubs = () => {
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
       <HeadProvider>
-        <Title>Add Club || ClubSphere</Title>
+        <Title>Add Events || ClubSphere</Title>
       </HeadProvider>
 
       {/* Header */}
@@ -98,7 +100,7 @@ const AddClubs = () => {
             theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
           }`}
         >
-          Create New Club
+          Create New Events
         </h2>
         <p className="opacity-70 mt-2">
           Build your community and start growing members today.
@@ -114,11 +116,11 @@ const AddClubs = () => {
             : "bg-white border-gray-100"
         }`}
       >
-        {/* Club Name */}
+        {/* Event Name */}
         <div className="mb-6">
-          <label className={labelClass}>Club Name *</label>
+          <label className={labelClass}>Event Name *</label>
           <input
-            name="clubName"
+            name="eventName"
             required
             className={inputClass}
             placeholder="e.g. Photography Club"
@@ -190,14 +192,14 @@ const AddClubs = () => {
           />
         </div>
 
-        {/* Membership Fee */}
+        {/* Event Fee */}
         <div className="mb-8">
           <label className={labelClass}>
-            Membership Fee (0 for Free)
+            Event Fee (0 for Free)
           </label>
           <input
             type="number"
-            name="membershipFee"
+            name="eventFee"
             defaultValue={0}
             className={inputClass}
           />
@@ -214,7 +216,7 @@ const AddClubs = () => {
                 : "bg-[#682626] text-white hover:bg-[#520f0f]"
             } disabled:bg-gray-400`}
           >
-            {submitting ? "Creating..." : "Create Club"}
+            {submitting ? "Creating..." : "Create Event"}
           </button>
         </div>
       </form>
@@ -222,4 +224,4 @@ const AddClubs = () => {
   );
 };
 
-export default AddClubs;
+export default AddEvents;

@@ -30,6 +30,7 @@ import IsAdmin from "./Validation/IsAdmin";
 import IsModerator from "./Validation/IsModerator";
 import IsMember from "./Validation/IsMember";
 import AllEvents from "../Layouts/Main/AllEvents/AllEvents";
+import AddEvents from "../Layouts/Dashboard/Moderator/AddEvents/AddEvents";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -50,7 +51,7 @@ const WebRouter = () => {
               path: "/all-clubs",
               element: <AllClubs></AllClubs>,
             },
-             {
+            {
               path: "/all-events",
               element: <AllEvents></AllEvents>,
             },
@@ -152,7 +153,7 @@ const WebRouter = () => {
                 </IsModerator>
               ),
             },
-                                    {
+            {
               path: "/dashboard/manage-clubs",
               element: (
                 <IsModerator>
@@ -160,11 +161,19 @@ const WebRouter = () => {
                 </IsModerator>
               ),
             },
-             {
+            {
               path: "/dashboard/update-club/:id",
               element: (
                 <IsModerator>
                   <UpdateClub></UpdateClub>
+                </IsModerator>
+              ),
+            },
+            {
+              path: "/dashboard/addEvent",
+              element: (
+                <IsModerator>
+                  <AddEvents></AddEvents>
                 </IsModerator>
               ),
             },
