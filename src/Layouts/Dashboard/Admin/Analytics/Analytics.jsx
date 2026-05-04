@@ -17,7 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 import { HeadProvider, Title } from "react-head";
 import { useContext } from "react";
 import WebContext from "../../../../Context/WebContext";
-import { MdPeople, MdSchool, MdAttachMoney } from "react-icons/md";
+import { MdPeople, MdAttachMoney } from "react-icons/md";
+import { GiLaurelsTrophy } from "react-icons/gi";
 
 const Analytics = () => {
   const AxiosPublic = useAxiosPublic();
@@ -59,7 +60,7 @@ const Analytics = () => {
 
   const pieData = [
     { name: "Users", value: data.usersCount },
-    { name: "clubs", value: data.clubsCount },
+    { name: "Clubs", value: data.clubsCount },
     { name: "Fees ($)", value: data.totalFees },
   ];
 
@@ -96,7 +97,7 @@ const Analytics = () => {
           {
             label: "Total clubs",
             value: data.clubsCount,
-            icon: <MdSchool />,
+            icon: <GiLaurelsTrophy />,
             color: "#714747",
             bg: "#714747/10",
           },
@@ -208,15 +209,6 @@ const Analytics = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
-
-      {/* Decorative Divider */}
-      <div className="flex items-center gap-4 px-2 py-4">
-        <div className="h-0.5 flex-1 bg-linear-to-r from-transparent via-[#714747]/20 to-transparent"></div>
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-30">
-          End of Analytics Report
-        </p>
-        <div className="h-0.5 flex-1 bg-linear-to-r from-transparent via-[#714747]/20 to-transparent"></div>
       </div>
     </div>
   );

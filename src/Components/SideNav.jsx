@@ -24,13 +24,13 @@ const SideNav = ({ role }) => {
       to: "/dashboard/my-applications",
       label: "My Applications",
       icon: <MdAssignment />,
-      role: "Member",
+      role: "member",
     },
     {
       to: "/dashboard/my-reviews",
       label: "My Reviews",
       icon: <MdRateReview />,
-      role: "Member",
+      role: "member",
     },
   ];
 

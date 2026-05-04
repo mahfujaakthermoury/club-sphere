@@ -34,6 +34,19 @@ const RegisterPage = () => {
     const role = target.role.value || "member";
     const image = target.image.value || "";
 
+    const uppercase = /[A-Z]/;
+        const lowerase = /[a-z]/;
+
+        if (password.length < 6) {
+            return toast.error('Password must be at least 6 character')
+        }
+        if (!uppercase.test(password)) {
+            return toast.error('Need an Uppercase letter')
+        }
+        if (!lowerase.test(password)) {
+            return toast.error('Need a Lowercase letter')
+        }
+
     const exists = users.find((u) => u.email === email);
     if (exists) {
       toast.error("User already exists with this email");

@@ -30,7 +30,7 @@ const IsMember = ({ children }) => {
     );
   }
 
-  if (userData.role === "member") {
+  if (userData.role === "Member") {
     return children;
   }
 

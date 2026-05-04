@@ -153,7 +153,7 @@ const ManageAppliedApplications = () => {
       ),
     }),
     columnHelper.accessor("universityName", {
-      header: "University & club",
+      header: "Club",
       cell: (info) => (
         <div className="flex flex-col">
           <span className="font-black text-[10px] uppercase text-sky-500 tracking-wider leading-none mb-1">
