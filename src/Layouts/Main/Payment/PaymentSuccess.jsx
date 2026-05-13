@@ -73,18 +73,18 @@ const PaymentSuccess = () => {
       >
         {/* Success Icon */}
         <div className="flex justify-center mb-6">
-          <div className="p-5 rounded-full bg-[#cd974c]/20 text-[#cd974c] animate-pulse">
+          <div className="p-5 rounded-full bg-[#4ccd71]/20 text-[#4ccd71] animate-pulse">
             <CheckCircleOutline sx={{ fontSize: 60 }} />
           </div>
         </div>
 
         {/* Title */}
         <h1
-          className={`text-3xl font-bold mb-4 ${
-            theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
+          className={`text-3xl font-bold mb-7 ${
+            theme === "dark" ? "text-[#4ccd71]" : "text-[#34943b]"
           }`}
         >
-          Payment Successful 🎉
+          Congratulations !  
         </h1>
 
         {/* Message */}
@@ -100,28 +100,6 @@ const PaymentSuccess = () => {
           has been processed successfully. Your application is now under review.
         </p>
 
-        {/* Info Box */}
-        <div
-          className={`p-6 rounded-xl mb-10 text-left space-y-3 ${
-            theme === "dark" ? "bg-[#1f1616]" : "bg-[#f3e8dd]"
-          }`}
-        >
-          <div className="flex justify-between text-xs font-bold uppercase tracking-widest opacity-60">
-            <span>Club</span>
-            <span>Status</span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <p className="font-bold truncate pr-4">
-              {club.clubName}
-            </p>
-
-            <span className="px-4 py-1 bg-[#cd974c] text-white text-xs font-bold rounded-full shadow-md">
-              Pending
-            </span>
-          </div>
-        </div>
-
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
@@ -134,7 +112,7 @@ const PaymentSuccess = () => {
 
           <button
             onClick={() => navigate("/all-clubs")}
-            className="flex items-center justify-center gap-2 w-full px-6 py-3 border-2 border-[#682626] text-[#682626] font-bold rounded-full hover:bg-[#682626] hover:text-white transition-all duration-300"
+            className="flex items-center justify-center gap-2 w-full px-6 py-3 border-2 border-[#cd974c] text-[#cd974c] font-bold rounded-full hover:bg-[#682626] hover:text-white transition-all duration-300"
           >
             <ArrowBack fontSize="small" />
             More Clubs

@@ -24,7 +24,7 @@ const PaymentFailed = () => {
       <div
         className={`p-10 rounded-2xl border text-center transition-all duration-300 ${
           theme === "dark"
-            ? "bg-[#2a1d1d] border-[#3a2a2a]"
+            ? "bg-[#e90f0f] border-[#e90f0f]"
             : "bg-white border-[#ecd9c6]"
         }`}
       >
@@ -38,7 +38,7 @@ const PaymentFailed = () => {
         {/* Title */}
         <h1
           className={`text-3xl font-bold mb-4 ${
-            theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
+            theme === "dark" ? "text-[#e90f0f]" : "text-[#e90f0f]"
           }`}
         >
           Payment Failed ❌

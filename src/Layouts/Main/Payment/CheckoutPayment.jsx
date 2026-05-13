@@ -48,36 +48,68 @@ const CheckoutForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    if (!stripe || !elements) {
-      toast.error("Stripe not ready");
-      setLoading(false);
-      return;
-    }
+    try {
+      setLoading(true);
 
-    const { data } = await axiosPublic.post("/create-payment-intent", {
-      amount: totalAmount,
-      clubId: club._id,
-    });
+      // FREE CLUB REGISTRATION
+      if (totalAmount === 0) {
+        await axiosPublic.post("/payments", {
+          clubId: club._id,
+          amount: 0,
+          transactionId: "FREE_MEMBER_" + Date.now(),
+          email: user?.email,
+        });
 
-    const clientSecret = data.clientSecret;
-    const card = elements.getElement(CardElement);
+        toast.success("Registration successful!");
 
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: card,
-        billing_details: {
-          name: user?.displayName || "Club Applicant",
+        navigate("/payment-success", {
+          state: { club },
+        });
+
+        return;
+      }
+
+      // STRIPE PAYMENT
+      if (!stripe || !elements) {
+        toast.error("Stripe not ready");
+        return;
+      }
+
+      const { data } = await axiosPublic.post("/create-payment-intent", {
+        amount: totalAmount,
+        clubId: club._id,
+      });
+
+      const clientSecret = data.clientSecret;
+
+      if (!clientSecret) {
+        toast.error("No client secret found");
+        return;
+      }
+
+      const card = elements.getElement(CardElement);
+
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card,
+          billing_details: {
+            name: user?.displayName || "Club Applicant",
+            email: user?.email,
+          },
         },
-      },
-    }); 
+      });
 
-    if (result.error) {
-      toast.error(result.error.message || "Payment failed");
-      setLoading(false);
-      navigate("/payment-failed", { state: { club } });
-    } else {
+      if (result.error) {
+        toast.error(result.error.message || "Payment failed");
+
+        navigate("/payment-failed", {
+          state: { club },
+        });
+
+        return;
+      }
+
       if (result.paymentIntent?.status === "succeeded") {
         await axiosPublic.post("/payments", {
           clubId: club._id,
@@ -87,29 +119,35 @@ const CheckoutForm = () => {
         });
 
         toast.success("Payment successful!");
-        navigate("/payment-success", { state: { club } });
+
+        navigate("/payment-success", {
+          state: { club },
+        });
       }
+    } catch (error) {
+      console.log(error);
+
+      toast.error(error.message || "Something went wrong");
+    } finally {
       setLoading(false);
     }
   };
 
-  return ( 
-     <div className="max-w-2xl mx-auto">
+  return (
+    <div className="max-w-2xl mx-auto">
       {/* 3xl Title Rule */}
       <h1
-        className={`md:text-3xl text-2xl font-bold mb-8 text-center ${
-          theme === "dark" ? "text-white" : "text-[#682626]"
-        }`}
+        className={`md:text-3xl text-2xl font-bold mb-8 text-center ${theme === "dark" ? "text-white" : "text-[#682626]"
+          }`}
       >
         Payment Section
       </h1>
 
       <div
-        className={`rounded-4xl border overflow-hidden transition-all duration-300 ${
-          theme === "dark"
+        className={`rounded-4xl border overflow-hidden transition-all duration-300 ${theme === "dark"
             ? "bg-slate-900 border-slate-800"
             : "bg-white border-gray-100 shadow-xl"
-        }`}
+          }`}
       >
         <div className="p-8">
           <div className="flex items-center gap-4 mb-6">
@@ -145,30 +183,31 @@ const CheckoutForm = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div
-              className={`p-4 rounded-2xl border transition-all ${
-                theme === "dark"
-                  ? "bg-slate-800 border-slate-700"
-                  : "bg-gray-50 border-gray-200"
-              }`}
-            >
-              <CardElement
-                options={{
-                  style: {
-                    base: {
-                      fontSize: "16px",
-                      color: theme === "dark" ? "#fff" : "#424770",
-                      "::placeholder": {
-                        color: theme === "dark" ? "#94a3b8" : "#aab7c4",
+            {totalAmount > 0 && (
+              <div
+                className={`p-4 rounded-2xl border transition-all ${theme === "dark"
+                    ? "bg-slate-800 border-slate-700"
+                    : "bg-gray-50 border-gray-200"
+                  }`}
+              >
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: "16px",
+                        color: theme === "dark" ? "#fff" : "#424770",
+                        "::placeholder": {
+                          color: theme === "dark" ? "#94a3b8" : "#aab7c4",
+                        },
+                      },
+                      invalid: {
+                        color: "#9e2146",
                       },
                     },
-                    invalid: {
-                      color: "#9e2146",
-                    },
-                  },
-                }}
-              />
-            </div>
+                  }}
+                />
+              </div>
+            )}
 
             <button
               disabled={!stripe || loading}
@@ -193,11 +232,10 @@ const CheckoutPayment = () => {
 
   return (
     <div
-      className={`w-full min-h-screen py-16 transition-colors duration-300 ${
-        theme === "dark"
+      className={`w-full min-h-screen py-16 transition-colors duration-300 ${theme === "dark"
           ? "bg-slate-950 text-gray-300"
           : "bg-gray-50 text-gray-700"
-      }`}
+        }`}
     >
       <HeadProvider>
         <Title>Checkout || ClubSphere</Title>
