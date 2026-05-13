@@ -23,7 +23,7 @@ import { HeadProvider, Title } from "react-head";
 import { Payment, Security } from "@mui/icons-material";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
-
+console.log(import.meta.env.VITE_STRIPE_PK);
 const CheckoutForm = () => {
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
@@ -44,41 +44,18 @@ const CheckoutForm = () => {
     );
   }
 
-  const totalAmount =
-    (club.membershipFee || 0);
+  const totalAmount = Number(club.membershipFee || 0);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  // If membershipFee is 0, skip Stripe payment and submit directly
-  if (totalAmount === 0) {
-    try {
-      await axiosPublic.post("/payments", {
-        clubId: club._id,
-        amount: totalAmount,
-        transactionId: "FREE_PAYMENT",
-        email: user?.email,
-      });
-      toast.success("Payment successful! (Free)");
-      navigate("/payment-success", { state: { club } });
-    } catch (err) {
-      toast.error("Failed to submit free payment");
-      navigate("/payment-failed", { state: { club } });
-    } finally {
+    if (!stripe || !elements) {
+      toast.error("Stripe not ready");
       setLoading(false);
+      return;
     }
-    return; // exit the function, skip Stripe
-  }
 
-  // Existing Stripe flow
-  if (!stripe || !elements) {
-    toast.error("Stripe not ready");
-    setLoading(false);
-    return;
-  }
-
-  try {
     const { data } = await axiosPublic.post("/create-payment-intent", {
       amount: totalAmount,
       clubId: club._id,
@@ -91,34 +68,33 @@ const CheckoutForm = () => {
       payment_method: {
         card: card,
         billing_details: {
-          name: user?.displayName || "club Applicant",
+          name: user?.displayName || "Club Applicant",
         },
       },
-    });
+    }); 
 
     if (result.error) {
       toast.error(result.error.message || "Payment failed");
+      setLoading(false);
       navigate("/payment-failed", { state: { club } });
-    } else if (result.paymentIntent.status === "succeeded") {
-      await axiosPublic.post("/payments", {
-        clubId: club._id,
-        amount: totalAmount,
-        transactionId: result.paymentIntent.id,
-        email: user?.email,
-      });
-      toast.success("Payment successful!");
-      navigate("/payment-success", { state: { club } });
-    }
-  } catch (err) {
-    toast.error("Payment failed. Please try again.");
-    navigate("/payment-failed", { state: { club } });
-  } finally {
-    setLoading(false);
-  }
-};
+    } else {
+      if (result.paymentIntent?.status === "succeeded") {
+        await axiosPublic.post("/payments", {
+          clubId: club._id,
+          amount: totalAmount,
+          transactionId: result.paymentIntent.id,
+          email: user?.email,
+        });
 
-  return (
-    <div className="max-w-2xl mx-auto">
+        toast.success("Payment successful!");
+        navigate("/payment-success", { state: { club } });
+      }
+      setLoading(false);
+    }
+  };
+
+  return ( 
+     <div className="max-w-2xl mx-auto">
       {/* 3xl Title Rule */}
       <h1
         className={`md:text-3xl text-2xl font-bold mb-8 text-center ${
@@ -142,7 +118,7 @@ const CheckoutForm = () => {
             </div>
             <div>
               <p className="text-[10px] uppercase font-bold opacity-50">
-                club Application
+                Club Application
               </p>
               <h3 className="md:text-xl text-lg font-bold">
                 {club.clubName}

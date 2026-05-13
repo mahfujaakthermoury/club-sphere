@@ -25,7 +25,6 @@ const PaymentSuccess = () => {
       scholar: club,
       clubId: club._id,
       clubName: club.clubName,
-      universityName: club.universityName,
       fees: club.membershipFee,
       applicant: user.email,
       userName: user.displayName,
@@ -108,13 +107,13 @@ const PaymentSuccess = () => {
           }`}
         >
           <div className="flex justify-between text-xs font-bold uppercase tracking-widest opacity-60">
-            <span>University</span>
+            <span>Club</span>
             <span>Status</span>
           </div>
 
           <div className="flex justify-between items-center">
             <p className="font-bold truncate pr-4">
-              {club.universityName}
+              {club.clubName}
             </p>
 
             <span className="px-4 py-1 bg-[#cd974c] text-white text-xs font-bold rounded-full shadow-md">
