@@ -22,10 +22,10 @@ const PaymentSuccess = () => {
     if (!club || !user?.email) return;
 
     const payload = {
-      scholar: club,
       clubId: club._id,
+      category: club.category,
       clubName: club.clubName,
-      fees: club.membershipFee,
+      membershipFee: club.membershipFee,
       applicant: user.email,
       userName: user.displayName,
       appliedDate: new Date(),

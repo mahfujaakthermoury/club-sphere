@@ -15,7 +15,7 @@ import {
   MdPayment,
   MdRateReview,
   MdClose,
-  MdSchool,
+  MdBusiness,
   MdLocationOn,
   MdStar,
 } from "react-icons/md";
@@ -62,7 +62,12 @@ const MyApplications = () => {
       return;
     }
     navigate("/payment", {
-      state: { club: app.scholar || { _id: app.clubId } },
+      state: { _id: app.clubId,
+      category: app.category,
+      clubName: app.clubName,
+      membershipFee: app.membershipFee,
+      clubImage: app.clubImage,
+      location: app.location, }, 
     });
   };
 
@@ -102,11 +107,10 @@ const MyApplications = () => {
     try {
       const reviewData = {
         clubId: selectedForReview.clubId,
-        universityName: selectedForReview.universityName,
         clubName: selectedForReview.clubName,
         userName: user.displayName,
         userEmail: user.email,
-        postByEmail: selectedForReview.scholar.postedUserEmail,
+        postByEmail: selectedForReview.postedUserEmail,
         userImage: user.photoURL,
         ratingPoint: Number(rating),
         reviewComment: comment,
@@ -162,7 +166,7 @@ const MyApplications = () => {
               <div className="h-44 relative overflow-hidden">
                 <img
                   src={
-                    app.scholar?.universityImage ||
+                    app?.clubImage ||
                     "https://via.placeholder.com/400x200"
                   }
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -186,18 +190,18 @@ const MyApplications = () => {
               {/* Content */}
               <div className="p-6">
                 <div className="flex items-center gap-2 text-sky-500 text-[10px] font-black uppercase tracking-wider mb-2">
-                  <MdSchool /> {app.scholar?.degree || "Degree"}
+                  <MdBusiness /> {app.category || "Category"}
                 </div>
                 <h3 className="font-black text-lg leading-tight mb-1 line-clamp-1">
                   {app.clubName}
                 </h3>
                 <div className="flex items-center gap-1 text-xs opacity-60 mb-4 font-bold uppercase tracking-tighter">
-                  <MdLocationOn /> {app.universityName}
+                  <MdLocationOn /> {app.location}
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-6">
                   <span className="bg-slate-500/10 px-3 py-1 rounded-xl text-[10px] font-bold uppercase">
-                    {app.scholar.clubCategory}
+                    {app.membershipFee}
                   </span>
                   <span
                     className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase ${
@@ -285,7 +289,7 @@ const MyApplications = () => {
                 {selected.clubName}
               </h3>
               <p className="opacity-60 font-bold uppercase text-xs mb-8">
-                {selected.universityName}
+                {selected.location}
               </p>
 
               <div className="grid grid-cols-2 gap-8 mb-8">

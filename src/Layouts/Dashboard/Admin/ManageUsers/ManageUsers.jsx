@@ -122,7 +122,7 @@ const ManageUsers = () => {
                 : "cursor-pointer focus:border-[#682626]"
             }`}
           >
-            <option value="member">member</option>
+            <option value="Member">Member</option>
             <option value="Moderator">Moderator</option>
             <option value="Admin">Admin</option>
           </select>
@@ -221,7 +221,7 @@ const ManageUsers = () => {
               className="bg-transparent text-xs font-black uppercase tracking-widest outline-none cursor-pointer"
             >
               <option value="">All Roles</option>
-              <option value="member">Members</option>
+              <option value="Member">Members</option>
               <option value="Moderator">Moderators</option>
               <option value="Admin">Admins</option>
             </select>

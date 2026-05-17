@@ -175,7 +175,7 @@ const AllReviews = () => {
   return (
     <div className="w-full p-2 sm:p-4 md:p-8">
       <HeadProvider>
-        <Title>Manage Reviews || ScholarStream</Title>
+        <Title>Manage Reviews || ClubSphere</Title>
       </HeadProvider>
 
       {/* Header */}
@@ -315,7 +315,7 @@ const AllReviews = () => {
                     {selected.clubName}
                   </p>
                   <p className="text-xs opacity-60 font-bold uppercase mt-1">
-                    {selected.universityName}
+                    {selected.location}
                   </p>
                 </div>
 

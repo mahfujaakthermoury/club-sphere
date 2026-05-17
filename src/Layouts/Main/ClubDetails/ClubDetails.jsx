@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
-import { Rating } from "@mui/material";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import useAxiosPublic from "../../../Hook/useAxiosPublic";
 import DataLoader from "../../../Components/DataLoader";
@@ -23,26 +22,7 @@ const ClubDetails = () => {
     enabled: !!id,
   });
 
-  const { data: reviews = [] } = useQuery({
-    queryKey: ["reviews", id],
-    queryFn: async () => {
-      const res = await axiosPublic.get("/reviews", {
-        params: { clubId: id },
-      });
-      return res.data || [];
-    },
-    enabled: !!id,
-  });
-
   if (isLoading) return <DataLoader />;
-
-  const avgRating = reviews.length
-    ? Math.round(
-        (reviews.reduce((sum, r) => sum + (r.ratingPoint || 0), 0) /
-          reviews.length) *
-          10
-      ) / 10
-    : 0;
 
   return (
     <div
@@ -75,7 +55,7 @@ const ClubDetails = () => {
 
             {/* Category Badge */}
             <div className="absolute top-6 right-6 bg-[#cd974c] text-white text-xs font-bold px-4 py-1 rounded-full shadow-md">
-              {club?.clubCategory}
+              {club?.category}
             </div>
           </div>
 
@@ -116,15 +96,8 @@ const ClubDetails = () => {
               </div>
             </div>
 
-            {/* Rating + Button */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-[#3a2a2a]/40">
-              <div className="flex items-center gap-3">
-                <Rating value={avgRating} precision={0.5} readOnly />
-                <span className="text-sm opacity-70">
-                  ({reviews.length} Reviews)
-                </span>
-              </div>
-
+            {/* Button */}
+            <div className="flex justify-end pt-6 border-t border-[#3a2a2a]/40">
               <button
                 onClick={() => navigate("/payment", { state: { club } })}
                 className="border-2 border-[#682626] text-[#cd974c] px-10 py-3 rounded-full font-bold hover:bg-[#682626] hover:text-white transition-all duration-300"

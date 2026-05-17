@@ -23,7 +23,6 @@ import { HeadProvider, Title } from "react-head";
 import { Payment, Security } from "@mui/icons-material";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
-console.log(import.meta.env.VITE_STRIPE_PK);
 const CheckoutForm = () => {
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
@@ -135,7 +134,6 @@ const CheckoutForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* 3xl Title Rule */}
       <h1
         className={`md:text-3xl text-2xl font-bold mb-8 text-center ${theme === "dark" ? "text-white" : "text-[#682626]"
           }`}
@@ -166,7 +164,7 @@ const CheckoutForm = () => {
 
           <Divider className="opacity-10 mb-6" />
 
-          {/* Pricing Details - sm:text-lg Rule */}
+          {/* Pricing Details*/}
           <div className="space-y-3 mb-8">
             <div className="flex justify-between items-center opacity-70">
               <span className="sm:text-lg text-sm">Membership Fees</span>
