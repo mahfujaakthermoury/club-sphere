@@ -7,14 +7,18 @@ import {
   MdPeople,
   MdAnalytics,
   MdOutlineAppRegistration,
+  MdPayment,
+  MdGroup,
 } from "react-icons/md";
 import { FiFileText, FiLogOut } from "react-icons/fi";
 import { IoHomeSharp } from "react-icons/io5";
 import { useContext } from "react";
 import WebContext from "../Context/WebContext";
+import { GpsFixed } from "@mui/icons-material";
 
 const SideNav = ({ role }) => {
   const fixedRole = role?.toLowerCase() || "";
+ console.log(fixedRole);
 
   const { handleLogout, } = useContext(WebContext);
 
@@ -22,14 +26,20 @@ const SideNav = ({ role }) => {
     { to: "/dashboard/home", label: "Dashboard", icon: <MdOutlineDashboard /> },
     {
       to: "/dashboard/my-applications",
-      label: "My Applications",
+      label: "My Clubs",
       icon: <MdAssignment />,
       role: "member",
     },
     {
-      to: "/dashboard/my-reviews",
-      label: "My Reviews",
-      icon: <MdRateReview />,
+      to: "/dashboard/my-event",
+      label: "My Events",
+      icon: <MdAssignment/>,
+      role: "member",
+    },
+    {
+      to: "/dashboard/my-event",
+      label: "Payment History",
+      icon: <MdPayment />,
       role: "member",
     },
   ];
@@ -40,32 +50,44 @@ const SideNav = ({ role }) => {
       label: "Manage Users",
       icon: <MdPeople />,
     },
-    { to: "/dashboard/analytics", label: "Analytics", icon: <MdAnalytics /> },
+    { to: "/dashboard/analytics", 
+      label: "Analytics", 
+      icon: <MdAnalytics /> },
   ];
 
-  const moderatorLinks = [
-    { to: "/dashboard/add", label: "Add club", icon: <MdAddBox /> },
-    { to: "/dashboard/addEvent", label: "Add Event", icon: <MdAddBox /> },
+  const managerLinks = [
+    { to: "/dashboard/add", 
+      label: "Add Club", 
+      icon: <MdAddBox /> },
     {
       to: "/dashboard/manage-clubs",
-      label: "Manage clubs",
+      label: "Manage Clubs",
+      icon: <FiFileText />,
+    },
+    { to: "/dashboard/addEvent", 
+      label: "Add Event", 
+      icon: <MdAddBox /> 
+    },
+     {
+      to: "/dashboard/manage-events",
+      label: "Manage Events",
       icon: <FiFileText />,
     },
     {
-      to: "/dashboard/manage-applications",
-      label: "Manage Applications",
-      icon: <MdOutlineAppRegistration />,
+      to: "/dashboard/club-members",
+      label: "Club Members",
+      icon: <MdGroup />,
     },
     {
-      to: "/dashboard/all-reviews",
-      label: "All Reviews",
-      icon: <MdRateReview />,
+      to: "/dashboard/event-registrations",
+      label: "Event Registrations",
+      icon: <MdOutlineAppRegistration />,
     },
   ];
 
   const renderLinks = () => {
     if (fixedRole === "admin") return [...commonLinks, ...adminLinks];
-    if (fixedRole === "moderator") return [...commonLinks, ...moderatorLinks];
+    if (fixedRole === "manager") return [...commonLinks, ...managerLinks];
     return commonLinks;
   };
 

@@ -49,14 +49,14 @@ const ManageAppliedApplications = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["applications", "all", userData?.moderatorFor],
+    queryKey: ["applications", "all", userData?.managerFor],
     queryFn: async () => {
       const res = await AxiosPublic.get(
-        `/applications/${userData?.moderatorFor}`
+        `/applications/${userData?.managerFor}`
       );
       return res.data;
     },
-    enabled: !!userData?.moderatorFor,
+    enabled: !!userData?.managerFor,
   });
 
   const handleSendFeedback = async () => {
@@ -152,7 +152,7 @@ const ManageAppliedApplications = () => {
         </div>
       ),
     }),
-    columnHelper.accessor("universityName", {
+    columnHelper.accessor("clubName", {
       header: "Club",
       cell: (info) => (
         <div className="flex flex-col">
@@ -265,10 +265,10 @@ const ManageAppliedApplications = () => {
             theme === "dark" ? "text-white" : "text-slate-900"
           }`}
         >
-          Application Management
+          Membership Application 
         </h2>
         <p className="opacity-60 font-medium italic text-sm uppercase tracking-widest">
-          Moderator Control Panel
+          Manager Control Panel
         </p>
       </div>
 
@@ -372,7 +372,7 @@ const ManageAppliedApplications = () => {
                 {selected.clubName}
               </h3>
               <p className="opacity-60 font-bold uppercase text-xs mb-8">
-                {selected.universityName}
+                {selected.clubName}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

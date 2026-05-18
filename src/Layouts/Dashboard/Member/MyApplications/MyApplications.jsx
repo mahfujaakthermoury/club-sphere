@@ -131,7 +131,7 @@ const MyApplications = () => {
   return (
     <div className="w-full p-2 sm:p-4 md:p-8">
       <HeadProvider>
-        <Title>My Applications || ClubSphere</Title>
+        <Title>My Club Applications || ClubSphere</Title>
       </HeadProvider>
 
       <div className="mb-8">
@@ -140,7 +140,7 @@ const MyApplications = () => {
             theme === "dark" ? "text-white" : "text-slate-900"
           }`}
         >
-          My Applications
+          My Club Applications
         </h2>
         <p className="opacity-60 font-medium">
           Track and manage your club requests
@@ -313,10 +313,10 @@ const MyApplications = () => {
 
               <div className="p-6 rounded-3xl bg-slate-500/5 border border-slate-500/10">
                 <span className="text-[10px] font-black uppercase opacity-40 block mb-2">
-                  Moderator Feedback
+                  Manager Feedback
                 </span>
                 <p className="text-sm italic opacity-80 leading-relaxed">
-                  {selected.feedback || "No feedback from moderator yet."}
+                  {selected.feedback || "No feedback from manager yet."}
                 </p>
               </div>
 

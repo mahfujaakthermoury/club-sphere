@@ -51,9 +51,9 @@ const Analytics = () => {
       </div>
     );
 
-  const barData = Object.entries(data.appCountPerUniversity || {}).map(
+  const barData = Object.entries(data.appCountPerClub || {}).map(
     ([univ, count]) => ({
-      university: univ,
+      club: univ,
       applications: count,
     })
   );
@@ -130,7 +130,7 @@ const Analytics = () => {
 
       {/* 2. Visual Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Bar Chart: Applications per University */}
+        {/* Bar Chart: Applications per Club */}
         <div className={`lg:col-span-7 p-8 rounded-4xl border transition-all ${theme === "dark" ? colors.cardDark : colors.cardLight}`}>
           <div className="flex items-center gap-2 mb-8">
             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: colors.accent }}></div>
@@ -142,7 +142,7 @@ const Analytics = () => {
             <BarChart data={barData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === "dark" ? "#3c2b2b" : "#f0e5e5"} />
               <XAxis
-                dataKey="university"
+                dataKey="club"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: theme === "dark" ? "#f8f8f8" : "#714747", fontSize: 10, fontWeight: "bold" }}

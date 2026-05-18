@@ -14,23 +14,25 @@ import PaymentFailed from "../Layouts/Main/Payment/PaymentFailed";
 import MyProfile from "../Layouts/Dashboard/MyProfile/MyProfile";
 import Dashboard from "../Layouts/Dashboard/Dashboard";
 import DashboardHome from "../Layouts/Dashboard/DashboardHome/DashboardHome";
-import AddClubs from "../Layouts/Dashboard/Moderator/AddClubs/AddClubs";
+import AddClubs from "../Layouts/Dashboard/Manager/AddClubs/AddClubs";
 import ManageClubs from "../Layouts/Dashboard/Admin/ManageClubs/ManageClubs";
 import ManageUsers from "../Layouts/Dashboard/Admin/ManageUsers/ManageUsers";
 import Analytics from "../Layouts/Dashboard/Admin/Analytics/Analytics";
-import ManageAppliedApplications from "../Layouts/Dashboard/Moderator/ManageAppliedApplications/ManageAppliedApplications";
-import AllReviews from "../Layouts/Dashboard/Moderator/AllReviews/AllReviews";
+import ManageAppliedApplications from "../Layouts/Dashboard/Manager/ManageAppliedApplications/ManageAppliedApplications";
+import EventRegistrations from "../Layouts/Dashboard/Manager/EventRegistrations/EventRegistrations";
 import MyApplications from "../Layouts/Dashboard/Member/MyApplications/MyApplications";
-import MyReviews from "../Layouts/Dashboard/Member/MyReviews/MyReviews";
+import MyEvents from "../Layouts/Dashboard/Member/MyEvents/MyEvents";
 import EditApplication from "../Layouts/Dashboard/Member/EditApplication/EditApplication";
 import App from "../App";
-import UpdateClub from "../Layouts/Dashboard/Moderator/UpdateClub/UpdateClub";
+import UpdateClub from "../Layouts/Dashboard/Manager/UpdateClub/UpdateClub";
 import IsLoginUser from "./Validation/IsLoginUser";
 import IsAdmin from "./Validation/IsAdmin";
-import IsModerator from "./Validation/IsModerator";
+import IsManager from "./Validation/IsManager";
 import IsMember from "./Validation/IsMember";
 import AllEvents from "../Layouts/Main/AllEvents/AllEvents";
-import AddEvents from "../Layouts/Dashboard/Moderator/AddEvents/AddEvents";
+import AddEvents from "../Layouts/Dashboard/Manager/AddEvents/AddEvents";
+import UpdateEvent from "../Layouts/Dashboard/Manager/UpdateEvent/UpdateEvent";
+import ManageEvent from "../Layouts/Dashboard/Admin/ManageEvent/ManageEvent";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -144,53 +146,69 @@ const WebRouter = () => {
                 </IsAdmin>
               ),
             },
-            // moderator
+            // manager
             {
               path: "/dashboard/add",
               element: (
-                <IsModerator>
+                <IsManager>
                   <AddClubs></AddClubs>
-                </IsModerator>
+                </IsManager>
               ),
             },
             {
               path: "/dashboard/manage-clubs",
               element: (
-                <IsModerator>
+                <IsManager>
                   <ManageClubs></ManageClubs>
-                </IsModerator>
+                </IsManager>
               ),
             },
             {
               path: "/dashboard/update-club/:id",
               element: (
-                <IsModerator>
+                <IsManager>
                   <UpdateClub></UpdateClub>
-                </IsModerator>
+                </IsManager>
               ),
             },
             {
               path: "/dashboard/addEvent",
               element: (
-                <IsModerator>
+                <IsManager>
                   <AddEvents></AddEvents>
-                </IsModerator>
+                </IsManager>
+              ),
+            },
+             {
+              path: "/dashboard/manage-events",
+              element: (
+                <IsManager>
+                  <ManageEvent></ManageEvent>
+                </IsManager>
+              ),
+            },
+             {
+              path: "/dashboard/update-event/:id",
+              element: (
+                <IsManager>
+                  <UpdateEvent></UpdateEvent>
+                </IsManager>
               ),
             },
             {
-              path: "/dashboard/manage-applications",
+              path: "/dashboard/club-members",
               element: (
-                <IsModerator>
+                <IsManager>
                   <ManageAppliedApplications></ManageAppliedApplications>
-                </IsModerator>
+                </IsManager>
               ),
             },
             {
-              path: "/dashboard/all-reviews",
+              path: "/dashboard/event-registrations",
               element: (
-                <IsModerator>
-                  <AllReviews></AllReviews>
-                </IsModerator>
+                <IsManager>
+                  <EventRegistrations></EventRegistrations>
+                </IsManager>
               ),
             },
             // member
@@ -203,10 +221,10 @@ const WebRouter = () => {
               ),
             },
             {
-              path: "/dashboard/my-reviews",
+              path: "/dashboard/my-event",
               element: (
                 <IsMember>
-                  <MyReviews></MyReviews>
+                  <MyEvents></MyEvents>
                 </IsMember>
               ),
             },

@@ -72,7 +72,7 @@
                   <Link
                     className="hover:text-white transition duration-300"
                   >
-                    Our all Services
+                    Community 
                   </Link>
                 </li>
                 <li>

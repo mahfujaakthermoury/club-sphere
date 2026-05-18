@@ -41,7 +41,7 @@ const ReviewAddEdit = ({ review, onClose }) => {
           showConfirmButton: false,
         });
 
-        queryClient.invalidateQueries(["myReviews", review.userEmail]);
+        queryClient.invalidateQueries(["MyEvents", review.userEmail]);
         onClose();
       }
     } catch (error) {

@@ -16,7 +16,7 @@ import {
   MdChatBubbleOutline,
 } from "react-icons/md";
 
-const MyReviews = () => {
+const MyEvents = () => {
   const { user, theme } = useContext(WebContext);
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
@@ -25,7 +25,7 @@ const MyReviews = () => {
   const [editing, setEditing] = useState(null);
 
   const { data: reviews = [], isLoading } = useQuery({
-    queryKey: ["myReviews", user?.email],
+    queryKey: ["MyEvents", user?.email],
     queryFn: async () => {
       const res = await axiosPublic.get("/reviews", {
         params: { email: user?.email },
@@ -54,7 +54,7 @@ const MyReviews = () => {
             showConfirmButton: false,
             timer: 1000,
           });
-          queryClient.invalidateQueries(["myReviews", user.email]);
+          queryClient.invalidateQueries(["MyEvents", user.email]);
         }
       }
     });
@@ -65,7 +65,7 @@ const MyReviews = () => {
   return (
     <div className="w-full p-2 sm:p-4 md:p-8">
       <HeadProvider>
-        <Title>My Reviews || ClubSphere</Title>
+        <Title>My Event || ClubSphere</Title>
       </HeadProvider>
 
       <div className="mb-8">
@@ -74,16 +74,16 @@ const MyReviews = () => {
             theme === "dark" ? "text-white" : "text-slate-900"
           }`}
         >
-          My Reviews
+          My Event
         </h2>
         <p className="opacity-60 font-medium italic text-sm uppercase tracking-widest">
-          Feedback History
+          Track and manage your club events requests
         </p>
       </div>
 
       {reviews.length === 0 ? (
         <div className="py-20 text-center opacity-40 italic">
-          You haven't posted any reviews yet.
+          You haven't requested any club events yet.
         </div>
       ) : (
         <div
@@ -103,7 +103,7 @@ const MyReviews = () => {
                 }`}
               >
                 <tr>
-                  <th className="p-6">club & University</th>
+                  <th className="p-6">club & Club</th>
                   <th className="p-6">Review Comment</th>
                   <th className="p-6 text-center">Rating</th>
                   <th className="p-6">Date</th>
@@ -116,7 +116,7 @@ const MyReviews = () => {
                     key={rev._id}
                     className="hover:bg-sky-500/5 transition-colors group"
                   >
-                    {/* club & University */}
+                    {/* club & Club */}
                     <td className="p-6 max-w-[250px]">
                       <div className="flex items-start gap-3">
                         <div className="mt-1 p-2 rounded-xl bg-sky-500/10 text-sky-500">
@@ -127,7 +127,7 @@ const MyReviews = () => {
                             {rev.clubName}
                           </p>
                           <p className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                            {rev.universityName}
+                            {rev.clubName}
                           </p>
                         </div>
                       </div>
@@ -197,7 +197,7 @@ const MyReviews = () => {
               review={editing}
               onClose={() => {
                 setEditing(null);
-                queryClient.invalidateQueries(["myReviews", user.email]);
+                queryClient.invalidateQueries(["MyEvents", user.email]);
               }}
             />
           </div>
@@ -207,4 +207,4 @@ const MyReviews = () => {
   );
 };
 
-export default MyReviews;
+export default MyEvents;

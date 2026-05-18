@@ -126,7 +126,7 @@ const RegisterPage = () => {
               className={`input w-full ${theme === "dark" ? "bg-slate-800 text-gray-100" : "bg-gray-100 text-gray-800"} px-4 rounded-lg`}
             >
               <option value="Member">Member</option>
-              <option value="Moderator">Manager</option>
+              <option value="Manager">Manager</option>
               <option value="Admin">Admin</option>
             </select>
             <div className="relative">

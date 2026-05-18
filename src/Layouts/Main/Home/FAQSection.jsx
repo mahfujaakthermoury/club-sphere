@@ -133,8 +133,9 @@ const FAQSection = () => {
       <div className={` w-full mt-15  py-12   rounded-3xl text-center ${theme === "dark" ? "bg-[#cd974c] text-slate-900" : "bg-[#682626] text-white"}`}>
         <h2 className="text-3xl font-bold mb-4">Ready to join a club?</h2>
         <p className="mb-6">Sign up today and start exploring the perfect community for you!</p>
-        <button   onClick={handleClick}
- className={`px-8 py-3 rounded-full font-bold transition-all ${theme === "dark" ? "bg-slate-900 text-[#cd974c] hover:bg-slate-800" : "bg-white text-[#682626] hover:bg-[#f2ebe6]"}`}>
+        <button onClick={handleClick}
+          className={`px-8 py-3 rounded-full font-bold transition-all 
+          ${theme === "dark" ? "bg-slate-900 text-[#cd974c] hover:bg-slate-800" : "bg-white text-[#682626] hover:bg-[#f2ebe6]"}`}>
           Get Started
         </button>
       </div>

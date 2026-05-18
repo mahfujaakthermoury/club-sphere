@@ -7,6 +7,7 @@ import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import useAxiosPublic from "../../../../Hook/useAxiosPublic";
 import { HeadProvider, Title } from "react-head";
 import { MdCloudUpload } from "react-icons/md";
+import { Navigate } from "react-router";
 
 const image_API = `https://api.imgbb.com/1/upload?key=${
   import.meta.env.VITE_IMG_HOSTING_API
@@ -59,7 +60,7 @@ const AddEvents = () => {
         eventImage: finalImage,
         eventFee: Number(f.eventFee.value),
         status: "pending",
-        moderatorEmail: user?.email,
+        managerEmail: user?.email,
         createdAt: new Date().toISOString(),
       };
 
@@ -68,7 +69,7 @@ const AddEvents = () => {
 
       if (res.data.insertedId) {
         toast.success("Event added successfully!");
-       // navigate("/dashboard/manage-clubs");
+       Navigate("/dashboard/manage-event");
       }
     } catch (err) {
       toast.error(err.message);

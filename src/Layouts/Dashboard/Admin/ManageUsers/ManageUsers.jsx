@@ -77,10 +77,10 @@ const ManageUsers = () => {
   const handleAssign = async (userEmail) => {
     try {
       const res = await axiosSecure.put(`/users/assign/${userEmail}`, {
-        moderatorFor: user.email,
+        managerFor: user.email,
       });
       if (res.status === 200) {
-        toast.success("Moderator assigned successfully");
+        toast.success("Manager assigned successfully");
         refetch();
       }
     } catch (err) {
@@ -123,7 +123,7 @@ const ManageUsers = () => {
             }`}
           >
             <option value="Member">Member</option>
-            <option value="Moderator">Moderator</option>
+            <option value="Manager">Manager</option>
             <option value="Admin">Admin</option>
           </select>
         ),
@@ -147,18 +147,18 @@ const ManageUsers = () => {
               <MdDelete size={18} />
             </button>
 
-            {/* Assign Button (Only for Moderators) */}
-            {row.original.role === "Moderator" && (
+            {/* Assign Button (Only for Managers) */}
+            {row.original.role === "Manager" && (
               <button
-                disabled={row.original?.moderatorFor}
+                disabled={row.original?.managerFor}
                 onClick={() => handleAssign(row.original.email)}
                 className={`flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-black transition-all ${
-                  row.original?.moderatorFor
+                  row.original?.managerFor
                     ? "bg-emerald-500/10 text-emerald-500 opacity-60"
                     : "bg-[#cd974c] text-white hover:bg-[#682626] shadow-lg shadow-[#e8dccb]"
                 }`}
               >
-                {row.original?.moderatorFor ? (
+                {row.original?.managerFor ? (
                   <>
                     <MdCheckCircle className="text-lg" /> Assigned
                   </>
@@ -222,7 +222,7 @@ const ManageUsers = () => {
             >
               <option value="">All Roles</option>
               <option value="Member">Members</option>
-              <option value="Moderator">Moderators</option>
+              <option value="Manager">Managers</option>
               <option value="Admin">Admins</option>
             </select>
           </div>

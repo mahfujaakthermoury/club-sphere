@@ -3,7 +3,6 @@ import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
@@ -16,20 +15,22 @@ import { HeadProvider, Title } from "react-head";
 import {
   MdDelete,
   MdVisibility,
-  MdStar,
-  MdCalendarToday,
+  MdEvent,
   MdClose,
-  MdRateReview,
+  MdPeople,
+  MdPayments,
 } from "react-icons/md";
 
 const columnHelper = createColumnHelper();
 
-const AllReviews = () => {
+const EventRegistrations = () => {
   const AxiosPublic = useAxiosPublic();
   const { user, theme } = useContext(WebContext);
   const queryClient = useQueryClient();
+
   const [selected, setSelected] = useState(null);
 
+  // Get Logged User Info
   const { data: userData } = useQuery({
     queryKey: ["userRole", user?.email],
     enabled: !!user?.email,
@@ -39,99 +40,140 @@ const AllReviews = () => {
     },
   });
 
+  // Get Event Registrations For Club Manager
   const {
-    data: reviews = [],
+    data: registrations = [],
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["reviews", user?.email],
-    enabled: !!userData?.moderatorFor,
+    queryKey: ["eventRegistrations", userData?.managerFor],
+    enabled: !!userData?.managerFor,
     queryFn: async () => {
       const res = await AxiosPublic.get(
-        `/reviews?modMail=${userData?.moderatorFor}`
+        `/eventRegistrations?clubId=${userData?.managerFor}`
       );
       return res.data;
     },
   });
 
+  // Cancel Registration
   const handleDelete = (id) => {
     Swal.fire({
-      title: "Delete review?",
-      text: "This action cannot be undone.",
+      title: "Cancel Registration?",
+      text: "This registration will be removed.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
-      confirmButtonText: "Yes, Delete",
+      confirmButtonText: "Yes, Cancel",
       background: theme === "dark" ? "#0f172a" : "#fff",
       color: theme === "dark" ? "#fff" : "#000",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await AxiosPublic.delete(`/reviews/${id}`);
+          const res = await AxiosPublic.delete(
+            `/eventRegistrations/${id}`
+          );
+
           if (res.status === 200) {
             Swal.fire({
               icon: "success",
-              title: "Deleted!",
-              timer: 1000,
+              title: "Registration Cancelled",
+              timer: 1200,
               showConfirmButton: false,
             });
-            queryClient.invalidateQueries(["reviews", userData?.moderatorFor]);
+
+            queryClient.invalidateQueries([
+              "eventRegistrations",
+              userData?.managerFor,
+            ]);
           }
         } catch (err) {
-          Swal.fire({ icon: "error", title: "Error deleting review" });
           console.log(err);
-          
+
+          Swal.fire({
+            icon: "error",
+            title: "Failed to cancel registration",
+          });
         }
       }
     });
   };
 
+  // Table Columns
   const columns = [
     columnHelper.accessor((_, i) => i + 1, {
       id: "index",
       header: "#",
       cell: (info) => (
-        <span className="font-bold opacity-50">{info.getValue()}</span>
+        <span className="font-bold opacity-50">
+          {info.getValue()}
+        </span>
       ),
     }),
-    columnHelper.accessor("clubName", {
-      header: "club & University",
+
+    columnHelper.accessor("eventTitle", {
+      header: "Event",
       cell: (info) => (
-        <div className="flex flex-col max-w-[200px]">
-          <span className="font-bold text-sm truncate" title={info.getValue()}>
+        <div className="flex flex-col">
+          <span className="font-bold text-sm">
             {info.getValue()}
           </span>
+
           <span className="text-[10px] uppercase tracking-wider opacity-60 font-black">
-            {info.row.original.universityName}
+            {info.row.original.location}
           </span>
         </div>
       ),
     }),
-    columnHelper.accessor("reviewComment", {
-      header: "User Feedback",
+
+    columnHelper.accessor("userEmail", {
+      header: "Participant",
       cell: (info) => (
-        <p className="text-xs italic opacity-80 line-clamp-1 max-w-[250px]">
-          "{info.getValue()}"
+        <p className="text-sm font-medium opacity-80">
+          {info.getValue()}
         </p>
       ),
     }),
-    columnHelper.accessor("ratingPoint", {
-      header: "Rating",
+
+    columnHelper.accessor("status", {
+      header: "Status",
       cell: (info) => (
-        <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 px-2 py-1 rounded-lg w-fit font-black text-xs">
-          <MdStar className="text-amber-500" /> {info.getValue()}
+        <div
+          className={`px-3 py-1 rounded-xl text-xs font-black uppercase w-fit ${
+            info.getValue() === "registered"
+              ? "bg-green-500/10 text-green-500"
+              : "bg-red-500/10 text-red-500"
+          }`}
+        >
+          {info.getValue()}
         </div>
       ),
     }),
-    columnHelper.accessor("reviewDate", {
-      header: "Posted On",
+
+    columnHelper.accessor("paymentId", {
+      header: "Payment",
+      cell: (info) =>
+        info.getValue() ? (
+          <div className="flex items-center gap-1 text-emerald-500 text-xs font-black">
+            <MdPayments />
+            Paid
+          </div>
+        ) : (
+          <span className="text-xs opacity-40">
+            Free Event
+          </span>
+        ),
+    }),
+
+    columnHelper.accessor("registeredAt", {
+      header: "Registered",
       cell: (info) => (
-        <div className="flex items-center gap-1 opacity-70 text-xs">
-          <MdCalendarToday size={12} />
+        <span className="text-xs opacity-70">
           {new Date(info.getValue()).toLocaleDateString()}
-        </div>
+        </span>
       ),
     }),
+
     columnHelper.display({
       id: "actions",
       header: "Actions",
@@ -139,15 +181,16 @@ const AllReviews = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setSelected(info.row.original)}
-            className="p-2 bg-sky-500/10 text-sky-500 rounded-xl hover:bg-sky-500 hover:text-white transition-all"
-            title="View Details"
+            className="p-2 bg-[#682626]/10 text-[#cd974c] rounded-xl hover:bg-[#682626] hover:text-white transition-all"
           >
             <MdVisibility size={18} />
           </button>
+
           <button
-            onClick={() => handleDelete(info.row.original._id)}
+            onClick={() =>
+              handleDelete(info.row.original._id)
+            }
             className="p-2 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
-            title="Delete Review"
           >
             <MdDelete size={18} />
           </button>
@@ -157,25 +200,28 @@ const AllReviews = () => {
   ];
 
   const table = useReactTable({
-    data: reviews,
+    data: registrations,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel:
+      getPaginationRowModel(),
   });
 
   if (isLoading) return <DataLoader />;
+
   if (isError)
     return (
       <div className="text-center py-20 text-red-500 font-bold">
-        Failed to load reviews.
+        Failed to load event registrations.
       </div>
     );
 
   return (
     <div className="w-full p-2 sm:p-4 md:p-8">
       <HeadProvider>
-        <Title>Manage Reviews || ClubSphere</Title>
+        <Title>
+          Event Registrations || ClubSphere
+        </Title>
       </HeadProvider>
 
       {/* Header */}
@@ -183,23 +229,29 @@ const AllReviews = () => {
         <div>
           <h2
             className={`md:text-3xl text-2xl font-black tracking-tight ${
-              theme === "dark" ? "text-white" : "text-slate-900"
+              theme === "dark"
+                ? "text-white"
+                : "text-slate-900"
             }`}
           >
-            Manage Reviews
+            Event Registrations
           </h2>
+
           <p className="opacity-60 font-medium">
-            Reviewing feedback for clubs under your moderation.
+            Manage and track all event
+            registrations, participant details,
+            and attendance activity in one place.
           </p>
         </div>
-        <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl shadow-lg">
-          <MdRateReview />
+
+        <div className="h-12 w-12 rounded-2xl bg-[#682626]/10 text-[#cd974c] flex items-center justify-center text-2xl shadow-lg">
+          <MdPeople />
         </div>
       </div>
 
-      {/* Table Section */}
+      {/* Table */}
       <div
-        className={`overflow-hidden rounded-4xl border transition-all ${
+        className={`overflow-hidden rounded-4xl border ${
           theme === "dark"
             ? "bg-slate-900 border-slate-800"
             : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
@@ -219,7 +271,8 @@ const AllReviews = () => {
                   {hg.headers.map((header) => (
                     <th key={header.id} className="p-6">
                       {flexRender(
-                        header.column.columnDef.header,
+                        header.column.columnDef
+                          .header,
                         header.getContext()
                       )}
                     </th>
@@ -227,20 +280,27 @@ const AllReviews = () => {
                 </tr>
               ))}
             </thead>
+
             <tbody className="divide-y divide-slate-500/10">
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:bg-sky-500/5 transition-colors"
+                  className="hover:bg-[#682626]/5 transition-colors"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="p-6">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
+                  {row
+                    .getVisibleCells()
+                    .map((cell) => (
+                      <td
+                        key={cell.id}
+                        className="p-6"
+                      >
+                        {flexRender(
+                          cell.column.columnDef
+                            .cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
                 </tr>
               ))}
             </tbody>
@@ -250,21 +310,25 @@ const AllReviews = () => {
         {/* Pagination */}
         <div className="p-6 flex items-center justify-between border-t border-slate-500/10">
           <span className="text-xs font-bold opacity-50 uppercase tracking-widest">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            Page{" "}
+            {table.getState().pagination
+              .pageIndex + 1}{" "}
+            of {table.getPageCount()}
           </span>
+
           <div className="flex gap-2">
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="px-4 py-2 rounded-xl bg-slate-500/10 text-xs font-black uppercase disabled:opacity-20 hover:bg-sky-500 hover:text-white transition-all"
+              className="px-4 py-2 rounded-xl bg-slate-500/10 text-xs font-black uppercase disabled:opacity-20 hover:bg-[#682626] hover:text-white transition-all"
             >
               Prev
             </button>
+
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-black uppercase disabled:opacity-20 hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20"
+              className="px-4 py-2 rounded-xl bg-[#682626] text-white text-xs font-black uppercase disabled:opacity-20 hover:bg-[#682626] transition-all"
             >
               Next
             </button>
@@ -272,9 +336,9 @@ const AllReviews = () => {
         </div>
       </div>
 
-      {/* Modern Detail Modal */}
+      {/* Details Modal */}
       {selected && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div
             className={`w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden ${
               theme === "dark"
@@ -285,51 +349,59 @@ const AllReviews = () => {
             <div className="p-8 relative">
               <button
                 onClick={() => setSelected(null)}
-                className="absolute top-6 right-6 p-2 rounded-full hover:bg-red-500/10 text-red-500 transition-colors"
+                className="absolute top-6 right-6 p-2 rounded-full hover:bg-red-500/10 text-red-500"
               >
                 <MdClose size={24} />
               </button>
 
               <div className="flex items-center gap-4 mb-8">
-                <img
-                  src={selected.userImage}
-                  alt=""
-                  className="w-16 h-16 rounded-2xl object-cover shadow-lg"
-                />
+                <div className="w-16 h-16 rounded-2xl bg-[#682626]/10 text-[#cd974c] flex items-center justify-center text-3xl">
+                  <MdEvent />
+                </div>
+
                 <div>
-                  <h3 className="font-black sm:text-xl text-lg tracking-tight leading-none">
-                    {selected.userName}
+                  <h3 className="font-black text-xl">
+                    {selected.eventTitle}
                   </h3>
-                  <p className="text-sm opacity-60 font-medium">
+
+                  <p className="text-sm opacity-60">
                     {selected.userEmail}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-sky-500 block mb-1">
-                    club
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#cd974c]">
+                    Event Status
                   </span>
-                  <p className="font-bold text-lg leading-tight">
-                    {selected.clubName}
-                  </p>
-                  <p className="text-xs opacity-60 font-bold uppercase mt-1">
-                    {selected.location}
+
+                  <p className="font-bold text-lg mt-1">
+                    {selected.status}
                   </p>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-slate-500/5 border border-slate-500/10 italic text-sm leading-relaxed opacity-80">
-                  "{selected.reviewComment}"
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#cd974c]">
+                    Registration Date
+                  </span>
+
+                  <p className="font-bold mt-1">
+                    {new Date(
+                      selected.registeredAt
+                    ).toDateString()}
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-4">
-                  <div className="flex items-center gap-1 bg-amber-500/10 text-amber-500 px-4 py-2 rounded-2xl font-black">
-                    <MdStar /> {selected.ratingPoint}
-                  </div>
-                  <div className="text-xs font-bold opacity-40 uppercase tracking-tighter">
-                    Posted: {new Date(selected.reviewDate).toDateString()}
-                  </div>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#cd974c]">
+                    Payment ID
+                  </span>
+
+                  <p className="font-bold mt-1">
+                    {selected.paymentId ||
+                      "No Payment Required"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -340,4 +412,4 @@ const AllReviews = () => {
   );
 };
 
-export default AllReviews;
+export default EventRegistrations;

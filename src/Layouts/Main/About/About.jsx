@@ -35,7 +35,9 @@ const About = () => {
               Discover, join, and manage local clubs effortlessly. ClubSphere connects communities, simplifies club management, and empowers you to engage in meaningful social experiences.
             </p>
             <div className="flex gap-4 mt-4">
-              <button className={`px-6 py-3 rounded-full font-bold ${theme === "dark" ? "bg-[#cd974c] text-slate-900 hover:bg-[#e0b354]" : "bg-[#682626] text-white hover:bg-[#520f0f]"} transition-all`}>
+              <button onClick={handleClick}
+              className={`px-6 py-3 rounded-full font-bold 
+              ${theme === "dark" ? "bg-[#cd974c] text-slate-900 hover:bg-[#e0b354]" : "bg-[#682626] text-white hover:bg-[#520f0f]"} transition-all`}>
                 Get Started
               </button>
               <button className={`px-6 py-3 rounded-full font-bold border ${theme === "dark" ? "border-[#cd974c] text-[#cd974c] hover:bg-[#cd974c] hover:text-slate-900" : "border-[#682626] text-[#682626] hover:bg-[#682626] hover:text-white"} transition-all`}>
@@ -119,7 +121,8 @@ const About = () => {
           <h2 className="text-3xl font-bold mb-4">Ready to join a club?</h2>
           <p className="mb-6">Sign up today and start exploring the perfect community for you!</p>
           <button onClick={handleClick}
-          className={`px-8 py-3 rounded-full font-bold transition-all ${theme === "dark" ? "bg-slate-900 text-[#cd974c] hover:bg-slate-800" : "bg-white text-[#682626] hover:bg-[#f2ebe6]"}`}>
+          className={`px-8 py-3 rounded-full font-bold transition-all 
+          ${theme === "dark" ? "bg-slate-900 text-[#cd974c] hover:bg-slate-800" : "bg-white text-[#682626] hover:bg-[#f2ebe6]"}`}>
             Get Started
           </button>
         </div>

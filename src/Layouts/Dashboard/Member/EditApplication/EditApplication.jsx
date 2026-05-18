@@ -25,7 +25,7 @@ const EditApplication = () => {
 
   const [form, setForm] = useState({
     clubName: "",
-    universityName: "",
+    clubName: "",
     userName: "",
     applicant: "",
     address: "",
@@ -44,7 +44,7 @@ const EditApplication = () => {
     if (appData) {
       setForm({
         clubName: appData.clubName || "",
-        universityName: appData.universityName || "",
+        clubName: appData.clubName || "",
         userName: appData.userName || "",
         applicant: appData.applicant || "",
         address: appData.address || "",
@@ -152,13 +152,13 @@ const EditApplication = () => {
             />
           </div>
 
-          {/* University Name */}
+          {/* Club Name */}
           <div className="md:col-span-2">
             <TextField
               fullWidth
-              label="University Name"
-              name="universityName"
-              value={form.universityName}
+              label="Club Name"
+              name="clubName"
+              value={form.clubName}
               onChange={handleChange}
               sx={fieldStyles}
               InputProps={{

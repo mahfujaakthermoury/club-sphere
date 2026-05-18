@@ -6,7 +6,7 @@ import useAxiosPublic from "../../Hook/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
 
-const IsModerator = ({ children }) => {
+const IsManager = ({ children }) => {
   const { user, loading } = useContext(WebContext);
   const axiosPublic = useAxiosPublic();
 
@@ -30,15 +30,15 @@ const IsModerator = ({ children }) => {
     );
   }
 
-  if (userData.role === "Moderator") {
+  if (userData.role === "Manager") {
     return children;
   }
 
   return <Navigate to="/dashboard/home"></Navigate>;
 };
 
-IsModerator.propTypes = {
+IsManager.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default IsModerator;
+export default IsManager;
