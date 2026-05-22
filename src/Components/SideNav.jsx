@@ -2,7 +2,6 @@ import { Link, NavLink } from "react-router";
 import {
   MdOutlineDashboard,
   MdAssignment,
-  MdRateReview,
   MdAddBox,
   MdPeople,
   MdAnalytics,
@@ -37,7 +36,7 @@ const SideNav = ({ role }) => {
       role: "member",
     },
     {
-      to: "/dashboard/my-event",
+      to: "/dashboard/payment-history",
       label: "Payment History",
       icon: <MdPayment />,
       role: "member",

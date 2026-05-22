@@ -13,9 +13,8 @@ import {
   MdEdit,
   MdDelete,
   MdPayment,
-  MdRateReview,
   MdClose,
-  MdBusiness,
+  MdCategory ,
   MdLocationOn,
   MdStar,
 } from "react-icons/md";
@@ -28,10 +27,6 @@ const MyApplications = () => {
   const queryClient = useQueryClient();
 
   const [selected, setSelected] = useState(null);
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [selectedForReview, setSelectedForReview] = useState(null);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
 
   const {
     data: applications = [],
@@ -62,12 +57,14 @@ const MyApplications = () => {
       return;
     }
     navigate("/payment", {
-      state: { _id: app.clubId,
-      category: app.category,
-      clubName: app.clubName,
-      membershipFee: app.membershipFee,
-      clubImage: app.clubImage,
-      location: app.location, }, 
+      state: {
+        _id: app.clubId,
+        category: app.category,
+        clubName: app.clubName,
+        membershipFee: app.membershipFee,
+        clubImage: app.clubImage,
+        location: app.location,
+      },
     });
   };
 
@@ -98,34 +95,6 @@ const MyApplications = () => {
     }
   };
 
-  const handleSubmitReview = async () => {
-    if (!rating || !comment) {
-      toast.error("Please provide rating & comment.");
-      return;
-    }
-
-    try {
-      const reviewData = {
-        clubId: selectedForReview.clubId,
-        clubName: selectedForReview.clubName,
-        userName: user.displayName,
-        userEmail: user.email,
-        postByEmail: selectedForReview.postedUserEmail,
-        userImage: user.photoURL,
-        ratingPoint: Number(rating),
-        reviewComment: comment,
-        reviewDate: new Date(),
-      };
-
-      await axiosSecure.post("/reviews", reviewData);
-      toast.success("Thank you for your review!");
-      queryClient.invalidateQueries(["applications", user.email]);
-      setReviewOpen(false);
-    } catch (error) {
-      toast.error("Submission failed.");
-    }
-  };
-
   if (isLoading) return <DataLoader />;
 
   return (
@@ -136,9 +105,8 @@ const MyApplications = () => {
 
       <div className="mb-8">
         <h2
-          className={`md:text-3xl text-2xl font-black tracking-tight ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
+          className={`md:text-3xl text-2xl font-black tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
         >
           My Club Applications
         </h2>
@@ -154,115 +122,127 @@ const MyApplications = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {applications.map((app) => (
-            <div
-              key={app._id}
-              className={`group rounded-[2.5rem] overflow-hidden border transition-all hover:shadow-2xl ${
-                theme === "dark"
-                  ? "bg-slate-900 border-slate-800 hover:shadow-sky-500/10"
-                  : "bg-white border-gray-100 hover:shadow-gray-200"
-              }`}
-            >
-              {/* Image Header */}
-              <div className="h-44 relative overflow-hidden">
-                <img
-                  src={
-                    app?.clubImage ||
-                    "https://via.placeholder.com/400x200"
-                  }
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  alt=""
-                />
-                <div className="absolute top-4 right-4">
-                  <span
-                    className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
-                      app.status === "completed"
-                        ? "bg-emerald-500 text-white"
-                        : app.status === "processing"
-                        ? "bg-amber-500 text-white"
-                        : "bg-sky-500 text-white"
-                    }`}
-                  >
-                    {app.status || "pending"}
-                  </span>
-                </div>
-              </div>
+           <div
+  key={app._id}
+  className={`group border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-2 hover:shadow-2xl ${
+    theme === "dark"
+      ? "bg-[#2a1d1d] border-[#3a2a2a]"
+      : "bg-white border-[#ecd9c6]"
+  }`}
+>
+  {/* Image */}
+  <div className="relative h-60 overflow-hidden">
+    <img
+      src={
+        app.clubImage ||
+        "https://via.placeholder.com/400x250"
+      }
+      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+      alt={app.clubName}
+    />
 
-              {/* Content */}
-              <div className="p-6">
-                <div className="flex items-center gap-2 text-sky-500 text-[10px] font-black uppercase tracking-wider mb-2">
-                  <MdBusiness /> {app.category || "Category"}
-                </div>
-                <h3 className="font-black text-lg leading-tight mb-1 line-clamp-1">
-                  {app.clubName}
-                </h3>
-                <div className="flex items-center gap-1 text-xs opacity-60 mb-4 font-bold uppercase tracking-tighter">
-                  <MdLocationOn /> {app.location}
-                </div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="bg-slate-500/10 px-3 py-1 rounded-xl text-[10px] font-bold uppercase">
-                    {app.membershipFee}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase ${
-                      app.payment === "Paid"
-                        ? "bg-emerald-500/10 text-emerald-500"
-                        : "bg-red-500/10 text-red-500"
-                    }`}
-                  >
-                    {app.payment || "Unpaid"}
-                  </span>
-                </div>
+    <div className="absolute top-4 right-4">
+      <span
+        className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
+          app.status === "completed"
+            ? "bg-emerald-500 text-white"
+            : app.status === "processing"
+            ? "bg-amber-500 text-white"
+            : "bg-[#cd974c] text-white"
+        }`}
+      >
+        {app.status || "pending"}
+      </span>
+    </div>
+  </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 border-t border-slate-500/10 pt-4">
-                  <button
-                    onClick={() => setSelected(app)}
-                    className="flex-1 p-3 bg-slate-500/10 rounded-2xl hover:bg-slate-500 hover:text-white transition-all flex justify-center shadow-sm"
-                    title="Details"
-                  >
-                    <MdVisibility size={20} />
-                  </button>
+  {/* Content */}
+  <div className="p-6 flex flex-col flex-1 gap-3">
+    <div className="flex justify-between">
+          {/* Category */}
+    <div className="flex items-center gap-2 text-sm font-semibold text-[#cd974c]">
+      <MdCategory />
+      <span>{app.category || "Category"}</span>
+    </div>
 
-                  {app.status === "completed" ? (
-                    <button
-                      onClick={() => {
-                        setSelectedForReview(app);
-                        setReviewOpen(true);
-                      }}
-                      className="flex-2 bg-emerald-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
-                    >
-                      <MdRateReview /> Add Review
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => handleEdit(app)}
-                        className="flex-1 p-3 bg-sky-500/10 text-sky-500 rounded-2xl hover:bg-sky-500 hover:text-white transition-all flex justify-center"
-                        title="Edit"
-                      >
-                        <MdEdit size={20} />
-                      </button>
-                      <button
-                        onClick={() => handlePay(app)}
-                        disabled={app.payment === "Paid"}
-                        className="flex-1 p-3 bg-amber-500/10 text-amber-500 rounded-2xl hover:bg-amber-500 hover:text-white disabled:opacity-20 transition-all flex justify-center"
-                        title="Pay"
-                      >
-                        <MdPayment size={20} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(app)}
-                        className="flex-1 p-3 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all flex justify-center"
-                        title="Delete"
-                      >
-                        <MdDelete size={20} />
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
+    {/* Fee + Payment */}
+    <div className="flex items-center justify-between mt-3 bg-[#cd974c]/10 rounded-full px-4 py-2">
+  <span className="text-[#cd974c] text-xs font-bold">
+    Fees: ${app.membershipFee || 0}
+  </span>
+
+  <span
+    className={`pl-3 text-xs font-bold ${
+      app.payment === "Paid"
+        ? "text-emerald-500"
+        : "text-red-500"
+    }`}
+  >
+    {app.payment || "Unpaid"}
+  </span>
+</div>
+    </div>
+
+    {/* Club Name */}
+    <h2
+      className={`text-xl font-bold ${
+        theme === "dark"
+          ? "text-[#cd974c]"
+          : "text-[#682626]"
+      }`}
+    >
+      {app.clubName}
+    </h2>
+
+    {/* Location */}
+    <div
+      className={`flex items-center gap-2 text-sm ${
+        theme === "dark"
+          ? "text-gray-400"
+          : "text-[#7a6a58]"
+      }`}
+    >
+      <MdLocationOn className="text-[#cd974c]" />
+      <span>{app.location || "No location available"}</span>
+    </div>
+
+    
+
+    {/* Actions */}
+    <div className="flex gap-2 mt-5">
+      <button
+        onClick={() => setSelected(app)}
+        className="flex-1 py-3 rounded-xl bg-slate-500/10 hover:bg-slate-500 hover:text-white transition-all flex justify-center"
+      >
+        <MdVisibility size={20} />
+      </button>
+
+      <button
+        onClick={() => handleEdit(app)}
+        className="flex-1 py-3 rounded-xl bg-[#cd974c]/10 text-[#cd974c] hover:bg-[#682626] hover:text-white transition-all flex justify-center"
+      >
+        <MdEdit size={20} />
+      </button>
+
+      <button
+        onClick={() => handlePay(app)}
+        disabled={app.payment === "Paid"}
+        className="flex-1 py-3 rounded-xl bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white disabled:opacity-30 transition-all flex justify-center"
+      >
+        <MdPayment size={20} />
+      </button>
+
+      <button
+        onClick={() => handleDelete(app)}
+        className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex justify-center"
+      >
+        <MdDelete size={20} />
+      </button>
+    </div>
+  </div>
+</div>
           ))}
         </div>
       )}
@@ -271,11 +251,10 @@ const MyApplications = () => {
       {selected && (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div
-            className={`w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden ${
-              theme === "dark"
+            className={`w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden ${theme === "dark"
                 ? "bg-slate-900 border border-slate-800"
                 : "bg-white"
-            }`}
+              }`}
           >
             <div className="p-10 relative">
               <button
@@ -297,7 +276,7 @@ const MyApplications = () => {
                   <span className="text-[10px] font-black uppercase opacity-40 block mb-1">
                     Status
                   </span>
-                  <p className="font-bold text-sm uppercase tracking-widest text-sky-500">
+                  <p className="font-bold text-sm uppercase tracking-widest text-[#cd974c]">
                     {selected.status || "Pending"}
                   </p>
                 </div>
@@ -326,7 +305,7 @@ const MyApplications = () => {
                     handleEdit(selected);
                     setSelected(null);
                   }}
-                  className="flex-1 py-4 bg-sky-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-sky-500/20"
+                  className="flex-1 py-4 bg-[#cd974c] text-white rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-[#cd974c]/20"
                 >
                   Edit Application
                 </button>
@@ -337,75 +316,6 @@ const MyApplications = () => {
                   Close
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Review Modal */}
-      {reviewOpen && (
-        <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in zoom-in duration-300">
-          <div
-            className={`w-full max-w-md rounded-[2.5rem] p-8 ${
-              theme === "dark"
-                ? "bg-slate-900 border border-slate-800"
-                : "bg-white shadow-2xl"
-            }`}
-          >
-            <h4 className="text-xl font-black mb-6 flex items-center gap-2">
-              <MdRateReview className="text-sky-500" /> Share Your Experience
-            </h4>
-
-            <div className="mb-6">
-              <span className="text-[10px] font-black uppercase opacity-40 block mb-2">
-                Rating (1-5)
-              </span>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => setRating(num)}
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                      rating >= num
-                        ? "bg-amber-500 text-white shadow-lg"
-                        : "bg-slate-500/10"
-                    }`}
-                  >
-                    <MdStar size={20} />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <span className="text-[10px] font-black uppercase opacity-40 block mb-2">
-                Your Thoughts
-              </span>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className={`w-full h-32 p-4 rounded-2xl border outline-none transition-all ${
-                  theme === "dark"
-                    ? "bg-slate-800 border-slate-700 text-white focus:border-sky-500"
-                    : "bg-gray-50 border-gray-100 focus:bg-white focus:border-sky-500"
-                }`}
-                placeholder="Tell us about the process..."
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setReviewOpen(false)}
-                className="flex-1 py-3 font-black uppercase text-[10px] opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmitReview}
-                className="flex-1 py-3 bg-sky-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-sky-500/20"
-              >
-                Submit Review
-              </button>
             </div>
           </div>
         </div>

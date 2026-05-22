@@ -33,6 +33,7 @@ import AllEvents from "../Layouts/Main/AllEvents/AllEvents";
 import AddEvents from "../Layouts/Dashboard/Manager/AddEvents/AddEvents";
 import UpdateEvent from "../Layouts/Dashboard/Manager/UpdateEvent/UpdateEvent";
 import ManageEvent from "../Layouts/Dashboard/Admin/ManageEvent/ManageEvent";
+import PaymentHistory from "../Layouts/Dashboard/Member/PaymentHistory/PaymentHistory";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -204,6 +205,14 @@ const WebRouter = () => {
               ),
             },
             {
+              path: "/dashboard/my-event",
+              element: (
+                <IsMember>
+                  <MyEvents></MyEvents>
+                </IsMember>
+              ),
+            },
+            {
               path: "/dashboard/event-registrations",
               element: (
                 <IsManager>
@@ -221,18 +230,18 @@ const WebRouter = () => {
               ),
             },
             {
-              path: "/dashboard/my-event",
-              element: (
-                <IsMember>
-                  <MyEvents></MyEvents>
-                </IsMember>
-              ),
-            },
-            {
               path: "/dashboard/edit-application/:id",
               element: (
                 <IsMember>
                   <EditApplication></EditApplication>
+                </IsMember>
+              ),
+            },
+            {
+              path: "/dashboard/payment-history",
+              element: (
+                <IsMember>
+                  <PaymentHistory></PaymentHistory>
                 </IsMember>
               ),
             },

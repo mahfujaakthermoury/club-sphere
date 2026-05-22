@@ -39,7 +39,7 @@ const DashboardHome = () => {
             !
           </h1>
           <p className={`max-w-xl sm:text-lg text-sm font-medium ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
-            Welcome to your dashboard. Track your applications, review progress, and stay up-to-date with ClubSphere activities.
+            Welcome to your dashboard. Track your applications and stay up-to-date with ClubSphere activities.
           </p>
         </div>
       </div>
