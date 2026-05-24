@@ -139,7 +139,7 @@ const ManageAppliedApplications = () => {
   };
 
   const columns = [
-    columnHelper.accessor("applicant", {
+    columnHelper.accessor("userName", {
       header: "Applicant",
       cell: (info) => (
         <div className="flex flex-col">
@@ -147,7 +147,7 @@ const ManageAppliedApplications = () => {
             {info.getValue()}
           </span>
           <span className="text-[10px] opacity-50 font-black truncate max-w-[120px]">
-            {info.row.original.userEmail}
+            {info.row.original.applicant}
           </span>
         </div>
       ),
@@ -168,10 +168,10 @@ const ManageAppliedApplications = () => {
         </div>
       ),
     }),
-    columnHelper.accessor("fees", {
+    columnHelper.accessor("membershipFee", {
       header: "Fees",
       cell: (info) => (
-        <span className="font-black text-xs">৳{info.getValue() || "0"}</span>
+        <span className="font-black text-xs">${info.getValue() || "0"}</span>
       ),
     }),
     columnHelper.accessor("status", {
@@ -386,7 +386,7 @@ const ManageAppliedApplications = () => {
                   <DetailItem
                     icon={<MdAttachMoney />}
                     label="Payment Status"
-                    value={selected.payment || "Unpaid"}
+                    value={`${selected.payment} • $${selected.membershipFee}`}
                   />
                 </div>
                 <div className="space-y-6">

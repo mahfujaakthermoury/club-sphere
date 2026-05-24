@@ -23,8 +23,10 @@ const PaymentSuccess = () => {
 
     const payload = {
       clubId: club._id,
+      clubImage:club.clubImage,
       category: club.category,
       clubName: club.clubName,
+      location: club.location,
       membershipFee: club.membershipFee,
       applicant: user.email,
       userName: user.displayName,
