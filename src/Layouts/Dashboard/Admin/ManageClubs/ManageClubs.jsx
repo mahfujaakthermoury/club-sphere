@@ -13,167 +13,191 @@ import useAxiosPublic from "../../../../Hook/useAxiosPublic";
 import DataLoader from "../../../../Components/DataLoader";
 import { useContext } from "react";
 import WebContext from "../../../../Context/WebContext";
-import { Link } from "react-router";
 import { HeadProvider, Title } from "react-head";
-import { MdEdit, MdDelete, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 const columnHelper = createColumnHelper();
 
 const ManageClubs = () => {
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
-  const {  theme } = useContext(WebContext);
+  const { theme } = useContext(WebContext);
 
-  // // Fetch user clubs
-  // const {
-  //   data: clubs = [],
-  //   isLoading: isClubsLoading,
-  // } = useQuery({
-  //   queryKey: ["allclubs"],
-  //   queryFn: async () => {
-  //     const res = await axiosSecure.get(`/clubs/${user?.email}`);
-  //     return res.data;
-  //   },
-  //   retry: 3,
-  // });
-
-  // Fetch featured clubs
   const {
-    data: featuredClubs = [],
-    isLoading: isFeaturedLoading,
-    isError: isFeaturedError,
+    data: clubs = [],
+    isLoading,
+    isError,
     refetch,
   } = useQuery({
-    queryKey: ["all-featured-clubs"],
+    queryKey: ["all-clubs"],
     queryFn: async () => {
-      const res = await axiosPublic.get("clubs");
+      const res = await axiosPublic.get("/clubs");
       return res.data.data;
     },
     retry: 1,
   });
 
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This club will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#64748b",
-      confirmButtonText: "Yes, Delete",
-      background: theme === "dark" ? "#0f172a" : "#fff",
-      color: theme === "dark" ? "#fff" : "#000",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await axiosSecure.delete(`/clubs/delete/${id}`);
-        if (res.data.deletedCount > 0) {
-          refetch();
-          Swal.fire("Deleted!", "Club removed.", "success");
-          refetch();
-        }
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      const result = await Swal.fire({
+        title: `Are you sure?`,
+        text: `You want to ${status.toLowerCase()} this club.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: `Yes, ${status}`,
+        background: theme === "dark" ? "#0f172a" : "#fff",
+        color: theme === "dark" ? "#fff" : "#000",
+      });
+
+      if (!result.isConfirmed) return;
+
+      const res = await axiosSecure.patch(`/clubs/status/${id}`, {
+        status,
+      });
+
+      if (res.data.success) {
+        Swal.fire({
+          icon: "success",
+          title: `Club ${status}`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        refetch();
       }
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  // Columns definition for table
   const columns = [
     columnHelper.accessor((_, i) => i + 1, {
       id: "index",
       header: "#",
-      cell: (info) => <span className="font-bold opacity-60">{info.getValue()}</span>,
-    }),
-    columnHelper.accessor("clubImage", {
-      header: "Clubs Image",
       cell: (info) => (
-        <img
-          src={info.getValue()}
-          className="h-10 w-10 rounded-xl object-cover ring-2 ring-sky-500/20"
-          alt="club"
-        />
-      ),
-    }),
-    columnHelper.accessor("clubName", {
-      header: "Club Name",
-      cell: (info) => (
-        <span className="lg:max-w-40 truncate block font-medium" title={info.getValue()}>
+        <span className="font-bold opacity-60">
           {info.getValue()}
         </span>
       ),
     }),
+
+    columnHelper.accessor("clubName", {
+      header: "Club Name",
+      cell: (info) => (
+        <span
+          className="font-medium"
+          title={info.getValue()}
+        >
+          {info.getValue()}
+        </span>
+      ),
+    }),
+
+    columnHelper.accessor("managerEmail", {
+      header: "Manager Email",
+      cell: (info) => (
+        <span className="text-sm">
+          {info.getValue()}
+        </span>
+      ),
+    }),
+
+    columnHelper.accessor("status", {
+      header: "Status",
+      cell: (info) => {
+        const status = info.getValue();
+
+        return (
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-bold ${
+              status === "approved"
+                ? "bg-green-500/10 text-green-500"
+                : status === "rejected"
+                ? "bg-red-500/10 text-red-500"
+                : "bg-yellow-500/10 text-yellow-500"
+            }`}
+          >
+            {status || "pending"}
+          </span>
+        );
+      },
+    }),
+
     columnHelper.accessor("membershipFee", {
-      header: "Fees",
+      header: " Fees",
       cell: (info) => (
         <span className="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 font-bold text-xs">
           ${info.getValue()}
         </span>
       ),
     }),
-    columnHelper.accessor("category", {
-      header: "Category",
-      cell: (info) => (
-        <span className="text-xs font-bold opacity-70 italic">{info.getValue()}</span>
-      ),
-    }),
+
     columnHelper.display({
       id: "actions",
       header: "Actions",
-      cell: (info) => (
-        <div className="flex items-center gap-2">
-          <Link
-            to={`/dashboard/update-club/${info.row.original._id}`}
-            className="p-2 bg-sky-500/10 text-sky-500 hover:bg-sky-500 hover:text-white rounded-xl transition-all"
-            title="Edit"
-          >
-            <MdEdit size={18} />
-          </Link>
-          <button
-            onClick={() => handleDelete(info.row.original._id)}
-            className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all"
-            title="Delete"
-          >
-            <MdDelete size={18} />
-          </button>
-        </div>
-      ),
+      cell: (info) => {
+        const club = info.row.original;
+
+        return (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                handleStatusUpdate(
+                  club._id,
+                  "approved"
+                )
+              }
+              disabled={club.status === "approved"}
+              className="px-3 py-2 rounded-xl bg-green-500/10 text-green-500 hover:bg-[#0b9a36] hover:text-white transition-all disabled:opacity-50"
+            >
+              Approve
+            </button>
+
+            <button
+              onClick={() =>
+                handleStatusUpdate(
+                  club._id,
+                  "rejected"
+                )
+              }
+              disabled={club.status === "rejected"}
+              className="px-3 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+            >
+              Reject
+            </button>
+          </div>
+        );
+      },
     }),
   ];
 
-  // Table instance for user clubs
-  // const table = useReactTable({
-  //   data: clubs,
-  //   columns,
-  //   getCoreRowModel: getCoreRowModel(),
-  //   getSortedRowModel: getSortedRowModel(),
-  //   getPaginationRowModel: getPaginationRowModel(),
-  // });
-
-  // Table instance for featured clubs
-  const featuredTable = useReactTable({
-    data: featuredClubs,
+  const table = useReactTable({
+    data: clubs,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isFeaturedLoading) return <DataLoader />;
+  if (isLoading) return <DataLoader />;
 
   return (
-    <div className="w-full p-2 sm:p-4 md:p-8 space-y-16">
+    <div className="w-full p-2 sm:p-4 md:p-8">
       <HeadProvider>
         <Title>Manage Clubs || ClubSphere</Title>
       </HeadProvider>
 
-      {/* Featured Clubs Table */}
-      {!isFeaturedError && featuredClubs.length > 0 && (
+      {!isError && clubs.length > 0 && (
         <div>
           <h2
-            className={`md:text-3xl text-2xl font-bold tracking-tight mb-4 ${
-              theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
+            className={`md:text-3xl text-2xl font-bold tracking-tight mb-6 ${
+              theme === "dark"
+                ? "text-[#cd974c]"
+                : "text-[#682626]"
             }`}
           >
-            Featured Clubs
+            Manage Clubs
           </h2>
+
           <div
             className={`overflow-hidden rounded-4xl border transition-all duration-300 ${
               theme === "dark"
@@ -190,11 +214,17 @@ const ManageClubs = () => {
                       : "bg-gray-50 text-slate-500"
                   }`}
                 >
-                  {featuredTable.getHeaderGroups().map((hg) => (
+                  {table.getHeaderGroups().map((hg) => (
                     <tr key={hg.id}>
                       {hg.headers.map((header) => (
-                        <th key={header.id} className="p-5">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        <th
+                          key={header.id}
+                          className="p-5"
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                         </th>
                       ))}
                     </tr>
@@ -202,16 +232,24 @@ const ManageClubs = () => {
                 </thead>
 
                 <tbody className="divide-y divide-slate-500/10">
-                  {featuredTable.getRowModel().rows.map((row) => (
+                  {table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
                       className={`transition-colors ${
-                        theme === "dark" ? "hover:bg-slate-800/30" : "hover:bg-gray-50/50"
+                        theme === "dark"
+                          ? "hover:bg-slate-800/30"
+                          : "hover:bg-gray-50/50"
                       }`}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="p-5 text-sm">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <td
+                          key={cell.id}
+                          className="p-5 text-sm"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </td>
                       ))}
                     </tr>

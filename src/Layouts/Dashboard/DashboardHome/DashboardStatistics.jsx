@@ -49,7 +49,7 @@ const DashboardStatistics = () => {
         <div className="flex py-3 items-center justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-widest opacity-50 mb-2">
-              Total Members
+              Total Users
             </p>
             <h3
               className={`text-3xl font-black ${
@@ -79,7 +79,7 @@ const DashboardStatistics = () => {
         <div className="flex py-3 items-center justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-widest opacity-50 mb-2">
-              Total Applications
+              Total Memberships
             </p>
             <h3
               className={`text-3xl font-black ${

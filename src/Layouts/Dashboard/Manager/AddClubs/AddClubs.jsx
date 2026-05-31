@@ -66,7 +66,7 @@ const AddClubs = () => {
       const res = await axiosSecure.post("/clubs", payload );
       if (res.data.insertedId) {
         toast.success("Club added successfully!");
-        navigate("/dashboard/manage-clubs");
+        navigate("/dashboard/clubs-management");
       }
     } catch (err) {
       toast.error(err.message);

@@ -1,204 +1,200 @@
-import { useState, useContext } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Swal from "sweetalert2";
-import WebContext from "../../../../Context/WebContext";
-import useAxiosPublic from "../../../../Hook/useAxiosPublic";
+import { useQuery } from "@tanstack/react-query";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
 import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import DataLoader from "../../../../Components/DataLoader";
+import { useContext } from "react";
+import WebContext from "../../../../Context/WebContext";
 import { HeadProvider, Title } from "react-head";
-import {
-  MdEdit,
-  MdDelete,
-  MdStar,
-  MdSchool,
-  MdEvent,
-  MdChatBubbleOutline,
-} from "react-icons/md";
+
+const columnHelper = createColumnHelper();
 
 const PaymentHistory = () => {
-  const { user, theme } = useContext(WebContext);
-  const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient();
+  const { theme } = useContext(WebContext);
 
-  const [editing, setEditing] = useState(null);
-
-  const { data: reviews = [], isLoading } = useQuery({
-    queryKey: ["MyEvents", user?.email],
+  const {
+    data: payments = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ["payment-history"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/reviews", {
-        params: { email: user?.email },
-      });
+      const res = await axiosSecure.get("/payments");
       return res.data;
     },
-    enabled: !!user?.email,
+    retry: 1,
   });
 
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Delete Review?",
-      text: "This cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      background: theme === "dark" ? "#0f172a" : "#fff",
-      color: theme === "dark" ? "#fff" : "#000",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await axiosSecure.delete(`/reviews/${id}`);
-        if (res.status === 200) {
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            showConfirmButton: false,
-            timer: 1000,
-          });
-          queryClient.invalidateQueries(["MyEvents", user.email]);
-        }
-      }
-    });
-  };
+  const columns = [
+    columnHelper.accessor((_, i) => i + 1, {
+      id: "index",
+      header: "#",
+      cell: (info) => (
+        <span className="font-bold opacity-60">{info.getValue()}</span>
+      ),
+    }),
+
+    columnHelper.accessor("clubName", {
+      header: "Club",
+      cell: (info) => (
+        <span className="font-medium">
+          {info.getValue() || "Unknown Club"}
+        </span>
+      ),
+    }),
+
+    columnHelper.accessor("amount", {
+      header: "Amount",
+      cell: (info) => (
+        <span className="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 font-bold text-xs">
+          ${info.getValue()}
+        </span>
+      ),
+    }),
+
+    // TYPE (derived safely)
+    columnHelper.display({
+      id: "type",
+      header: "Type",
+      cell: (info) => {
+        const item = info.row.original;
+
+        // If you later add "type" in DB, it will use it
+        const type = item.type || "membership";
+
+        return (
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-bold ${type === "membership"
+                ? "bg-blue-500/10 text-blue-500"
+                : "bg-purple-500/10 text-purple-500"
+              }`}
+          >
+            {type}
+          </span>
+        );
+      },
+    }),
+
+    columnHelper.accessor("paidAt", {
+      header: "Date",
+      cell: (info) => (
+        <span className="text-xs opacity-70">
+          {new Date(info.getValue()).toLocaleString()}
+        </span>
+      ),
+    }),
+
+    columnHelper.accessor("status", {
+      header: "Status",
+      cell: (info) => {
+        const status = info.getValue();
+
+        return (
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-bold ${status === "completed"
+                ? "bg-green-500/10 text-green-500"
+                : status === "pending"
+                  ? "bg-yellow-500/10 text-yellow-500"
+                  : "bg-red-500/10 text-red-500"
+              }`}
+          >
+            {status}
+          </span>
+        );
+      },
+    }),
+  ];
+
+  const table = useReactTable({
+    data: payments,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
   if (isLoading) return <DataLoader />;
 
   return (
-    <div className="w-full p-2 sm:p-4 md:p-8">
+    <div className="w-full p-4 md:p-8">
       <HeadProvider>
-        <Title> Payment History || ClubSphere</Title>
+        <Title>Payment History || ClubSphere</Title>
       </HeadProvider>
 
       <div className="mb-8">
         <h2
-          className={`md:text-3xl text-2xl font-black tracking-tight ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
+          className={`md:text-3xl text-2xl font-black tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
         >
-          My Event
+          Payment History
         </h2>
+        <p className="opacity-60 font-medium italic text-sm uppercase tracking-widest">
+          Track all membership and event payment records in one place.
+        </p>
       </div>
 
-      {reviews.length === 0 ? (
-        <div className="py-20 text-center opacity-40 italic">
-          You haven't any payment history yet.
-        </div>
-      ) : (
-        <div
-          className={`overflow-hidden rounded-[2.5rem] border transition-all ${
-            theme === "dark"
-              ? "bg-slate-900 border-slate-800"
-              : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
+      <div
+        className={`rounded-3xl border overflow-hidden ${theme === "dark"
+            ? "bg-slate-900 border-slate-800"
+            : "bg-white border-gray-100 shadow-xl"
           }`}
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead
-                className={`text-[10px] uppercase tracking-[0.2em] font-black border-b ${
-                  theme === "dark"
-                    ? "bg-slate-800/50 border-slate-800 text-slate-500"
-                    : "bg-gray-50 border-gray-100 text-slate-400"
+      >
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead
+              className={`text-xs uppercase tracking-widest font-bold ${theme === "dark"
+                  ? "bg-slate-800 text-slate-400"
+                  : "bg-gray-50 text-slate-500"
                 }`}
-              >
-                <tr>
-                  <th className="p-6">club & Club</th>
-                  <th className="p-6">Review Comment</th>
-                  <th className="p-6 text-center">Rating</th>
-                  <th className="p-6">Date</th>
-                  <th className="p-6 text-right">Actions</th>
+            >
+              {table.getHeaderGroups().map((hg) => (
+                <tr key={hg.id}>
+                  {hg.headers.map((header) => (
+                    <th key={header.id} className="p-5">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </th>
+                  ))}
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-500/10">
-                {reviews.map((rev) => (
-                  <tr
-                    key={rev._id}
-                    className="hover:bg-sky-500/5 transition-colors group"
-                  >
-                    {/* club & Club */}
-                    <td className="p-6 max-w-[250px]">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 p-2 rounded-xl bg-sky-500/10 text-sky-500">
-                          <MdSchool size={18} />
-                        </div>
-                        <div>
-                          <p className="font-bold text-sm leading-tight mb-1">
-                            {rev.clubName}
-                          </p>
-                          <p className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                            {rev.clubName}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
+              ))}
+            </thead>
 
-                    {/* Comment */}
-                    <td className="p-6">
-                      <div className="flex items-start gap-2 opacity-80 italic text-sm max-w-xs">
-                        <MdChatBubbleOutline className="mt-1 shrink-0 text-slate-400" />
-                        <p className="line-clamp-2" title={rev.reviewComment}>
-                          "{rev.reviewComment}"
-                        </p>
-                      </div>
+            <tbody className="divide-y divide-slate-500/10">
+              {table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className={`hover:${theme === "dark"
+                      ? "bg-slate-800/30"
+                      : "bg-gray-50/40"
+                    } transition`}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="p-5 text-sm">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </td>
-
-                    {/* Rating */}
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 font-black text-xs">
-                        <MdStar /> {rev.ratingPoint}
-                      </div>
-                    </td>
-
-                    {/* Date */}
-                    <td className="p-6">
-                      <div className="flex items-center gap-1 text-[10px] font-bold opacity-60">
-                        <MdEvent />{" "}
-                        {new Date(rev.reviewDate).toLocaleDateString()}
-                      </div>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="p-6 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => setEditing(rev)}
-                          className="p-2 bg-sky-500/10 text-sky-500 hover:bg-sky-500 hover:text-white rounded-xl transition-all shadow-sm"
-                          title="Edit Review"
-                        >
-                          <MdEdit size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(rev._id)}
-                          className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-sm"
-                          title="Delete Review"
-                        >
-                          <MdDelete size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
 
-      {/* Edit Modal (Portal style via component) */}
-      {editing && (
-        <div className="fixed inset-0 z-150 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div
-            className={`w-full max-w-lg rounded-[2.5rem] p-2 ${
-              theme === "dark" ? "bg-slate-800" : "bg-white"
-            }`}
-          >
-            <ReviewAddEdit
-              review={editing}
-              onClose={() => {
-                setEditing(null);
-                queryClient.invalidateQueries(["MyEvents", user.email]);
-              }}
-            />
-          </div>
+        {/* Footer */}
+        <div className="p-4 text-xs opacity-60 text-right">
+          Total Payments: {payments.length}
         </div>
-      )}
+      </div>
     </div>
   );
 };

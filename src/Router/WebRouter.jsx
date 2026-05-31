@@ -34,6 +34,7 @@ import PaymentHistory from "../Layouts/Dashboard/Member/PaymentHistory/PaymentHi
 import Transactions from "../Layouts/Dashboard/Admin/Transactions/Transactions";
 import ClubsManagement from "../Layouts/Dashboard/Manager/ClubsManagement/ClubsManagement";
 import EventsManagement from "../Layouts/Dashboard/Manager/EventsManagement/EventsManagement";
+import Analytics from "../Layouts/Dashboard/Admin/Analytics/Analytics";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -152,6 +153,14 @@ const WebRouter = () => {
               element: (
                 <IsAdmin>
                   <Transactions></Transactions>
+                </IsAdmin>
+              ),
+            },
+            {
+              path: "/dashboard/analytics",
+              element: (
+                <IsAdmin>
+                  <Analytics></Analytics>
                 </IsAdmin>
               ),
             },

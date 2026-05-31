@@ -7,7 +7,8 @@ import {
   MdOutlineAppRegistration,
   MdPayment,
   MdGroup,
-  MdEvent
+  MdEvent,
+  MdAnalytics
 } from "react-icons/md";
 import { FiFileText, FiLogOut } from "react-icons/fi";
 import { IoHomeSharp } from "react-icons/io5";
@@ -56,6 +57,10 @@ const SideNav = ({ role }) => {
     { to: "/dashboard/transactions", 
       label: "Transactions", 
       icon: <MdPayment /> 
+    },
+     { to: "/dashboard/analytics", 
+      label: "Analytics", 
+      icon: <MdAnalytics/> 
     },
   ];
 
