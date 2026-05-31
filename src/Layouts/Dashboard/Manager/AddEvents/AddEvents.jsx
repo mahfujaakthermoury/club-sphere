@@ -7,17 +7,18 @@ import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import useAxiosPublic from "../../../../Hook/useAxiosPublic";
 import { HeadProvider, Title } from "react-head";
 import { MdCloudUpload } from "react-icons/md";
-import { Navigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
-const image_API = `https://api.imgbb.com/1/upload?key=${
-  import.meta.env.VITE_IMG_HOSTING_API
-}`;
+const image_API = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMG_HOSTING_API
+  }`;
 
 const AddEvents = () => {
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
-  const { user, theme } = useContext(WebContext);
- // const navigate = useNavigate();
+  const { theme } = useContext(WebContext);
+  const navigate = useNavigate();
+  const { clubId } = useParams();
   const [submitting, setSubmitting] = useState(false);
 
   const hostImage = async (file) => {
@@ -29,6 +30,14 @@ const AddEvents = () => {
     });
     return res?.data?.data?.url || null;
   };
+
+  const { data: club } = useQuery({
+    queryKey: ["club", clubId],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/club/data/${clubId}`);
+      return res.data;
+    },
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,14 +62,16 @@ const AddEvents = () => {
       }
 
       const payload = {
+        clubId,
+        clubName: club.clubName,
+        category: club.category,
+        managerEmail: club.managerEmail,
         eventName: f.eventName.value,
         description: f.description.value,
-        category: f.category.value,
         location: f.location.value,
         eventImage: finalImage,
         eventFee: Number(f.eventFee.value),
         status: "pending",
-        managerEmail: user?.email,
         createdAt: new Date().toISOString(),
       };
 
@@ -69,7 +80,7 @@ const AddEvents = () => {
 
       if (res.data.insertedId) {
         toast.success("Event added successfully!");
-       Navigate("/dashboard/manage-event");
+        navigate("/dashboard/events-management");
       }
     } catch (err) {
       toast.error(err.message);
@@ -78,15 +89,13 @@ const AddEvents = () => {
     }
   };
 
-  const inputClass = `w-full px-4 py-3 rounded-xl border outline-none transition-all duration-300 ${
-    theme === "dark"
-      ? "bg-slate-800 border-slate-700 text-white focus:border-[#cd974c]"
-      : "bg-gray-50 border-gray-200 focus:border-[#682626]"
-  }`;
+  const inputClass = `w-full px-4 py-3 rounded-xl border outline-none transition-all duration-300 ${theme === "dark"
+    ? "bg-slate-800 border-slate-700 text-white focus:border-[#cd974c]"
+    : "bg-gray-50 border-gray-200 focus:border-[#682626]"
+    }`;
 
-  const labelClass = `block text-sm font-bold mb-2 ${
-    theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
-  }`;
+  const labelClass = `block text-sm font-bold mb-2 ${theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
+    }`;
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
@@ -97,9 +106,8 @@ const AddEvents = () => {
       {/* Header */}
       <div className="mb-10 text-center">
         <h2
-          className={`text-4xl font-black ${
-            theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
-          }`}
+          className={`text-4xl font-black ${theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
+            }`}
         >
           Create New Events
         </h2>
@@ -111,12 +119,22 @@ const AddEvents = () => {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className={`p-8 rounded-3xl border shadow-xl transition-all ${
-          theme === "dark"
-            ? "bg-slate-900 border-slate-800"
-            : "bg-white border-gray-100"
-        }`}
+        className={`p-8 rounded-3xl border shadow-xl transition-all ${theme === "dark"
+          ? "bg-slate-900 border-slate-800"
+          : "bg-white border-gray-100"
+          }`}
       >
+        {/* Club Name */}
+        <div className="mb-6">
+          <label className={labelClass}>Club Name *</label>
+          <input
+            name="clubName"
+            value={club?.clubName || ""}
+            readOnly
+             className={`${inputClass} font-bold`}
+            placeholder="e.g. Photography Club"
+          />
+        </div>
         {/* Event Name */}
         <div className="mb-6">
           <label className={labelClass}>Event Name *</label>
@@ -124,7 +142,7 @@ const AddEvents = () => {
             name="eventName"
             required
             className={inputClass}
-            placeholder="e.g. Photography Club"
+            placeholder="e.g. Photography Exhibition 2026 "
           />
         </div>
 
@@ -146,7 +164,8 @@ const AddEvents = () => {
             <label className={labelClass}>Category *</label>
             <input
               name="category"
-              required
+              value={club?.category || ""}
+              readOnly
               className={inputClass}
               placeholder="Photography, Sports, Tech..."
             />
@@ -168,11 +187,10 @@ const AddEvents = () => {
           <label className={labelClass}>Banner Image *</label>
 
           <div
-            className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${
-              theme === "dark"
-                ? "border-slate-700 hover:border-[#cd974c]"
-                : "border-gray-200 hover:border-[#682626]"
-            }`}
+            className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${theme === "dark"
+              ? "border-slate-700 hover:border-[#cd974c]"
+              : "border-gray-200 hover:border-[#682626]"
+              }`}
           >
             <MdCloudUpload className="mx-auto text-4xl text-[#cd974c] mb-2" />
             <input
@@ -211,11 +229,10 @@ const AddEvents = () => {
           <button
             type="submit"
             disabled={submitting}
-            className={`px-10 py-4 font-bold rounded-2xl transition-all shadow-lg ${
-              theme === "dark"
-                ? "bg-[#cd974c] text-slate-900 hover:bg-[#e0b354]"
-                : "bg-[#682626] text-white hover:bg-[#520f0f]"
-            } disabled:bg-gray-400`}
+            className={`px-10 py-4 font-bold rounded-2xl transition-all shadow-lg ${theme === "dark"
+              ? "bg-[#cd974c] text-slate-900 hover:bg-[#e0b354]"
+              : "bg-[#682626] text-white hover:bg-[#520f0f]"
+              } disabled:bg-gray-400`}
           >
             {submitting ? "Creating..." : "Create Event"}
           </button>

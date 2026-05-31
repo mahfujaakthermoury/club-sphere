@@ -86,7 +86,7 @@ const MyApplications = () => {
                     ? "bg-emerald-500 text-white"
                     : app.status === "processing"
                     ? "bg-amber-500 text-white"
-                    : "bg-[#cd974c] text-white"
+                    : "bg-[#1b9023] text-white"
                 }`}
               >
                 {app.status || "pending"}

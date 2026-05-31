@@ -17,12 +17,10 @@ import DashboardHome from "../Layouts/Dashboard/DashboardHome/DashboardHome";
 import AddClubs from "../Layouts/Dashboard/Manager/AddClubs/AddClubs";
 import ManageClubs from "../Layouts/Dashboard/Admin/ManageClubs/ManageClubs";
 import ManageUsers from "../Layouts/Dashboard/Admin/ManageUsers/ManageUsers";
-import Analytics from "../Layouts/Dashboard/Admin/Analytics/Analytics";
 import ManageAppliedApplications from "../Layouts/Dashboard/Manager/ManageAppliedApplications/ManageAppliedApplications";
 import EventRegistrations from "../Layouts/Dashboard/Manager/EventRegistrations/EventRegistrations";
 import MyApplications from "../Layouts/Dashboard/Member/MyApplications/MyApplications";
 import MyEvents from "../Layouts/Dashboard/Member/MyEvents/MyEvents";
-import EditApplication from "../Layouts/Dashboard/Member/EditApplication/EditApplication";
 import App from "../App";
 import UpdateClub from "../Layouts/Dashboard/Manager/UpdateClub/UpdateClub";
 import IsLoginUser from "./Validation/IsLoginUser";
@@ -32,8 +30,10 @@ import IsMember from "./Validation/IsMember";
 import AllEvents from "../Layouts/Main/AllEvents/AllEvents";
 import AddEvents from "../Layouts/Dashboard/Manager/AddEvents/AddEvents";
 import UpdateEvent from "../Layouts/Dashboard/Manager/UpdateEvent/UpdateEvent";
-import ManageEvent from "../Layouts/Dashboard/Admin/ManageEvent/ManageEvent";
 import PaymentHistory from "../Layouts/Dashboard/Member/PaymentHistory/PaymentHistory";
+import Transactions from "../Layouts/Dashboard/Admin/Transactions/Transactions";
+import ClubsManagement from "../Layouts/Dashboard/Manager/ClubsManagement/ClubsManagement";
+import EventsManagement from "../Layouts/Dashboard/Manager/EventsManagement/EventsManagement";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -139,17 +139,25 @@ const WebRouter = () => {
                 </IsAdmin>
               ),
             },
-            {
-              path: "/dashboard/analytics",
+             {
+              path: "/dashboard/manage-clubs",
               element: (
                 <IsAdmin>
-                  <Analytics></Analytics>
+                  <ManageClubs></ManageClubs>
+                </IsAdmin>
+              ),
+            },
+            {
+              path: "/dashboard/transactions",
+              element: (
+                <IsAdmin>
+                  <Transactions></Transactions>
                 </IsAdmin>
               ),
             },
             // manager
             {
-              path: "/dashboard/add",
+              path: "/dashboard/add-club",
               element: (
                 <IsManager>
                   <AddClubs></AddClubs>
@@ -157,10 +165,10 @@ const WebRouter = () => {
               ),
             },
             {
-              path: "/dashboard/manage-clubs",
+              path: "/dashboard/clubs-management",
               element: (
                 <IsManager>
-                  <ManageClubs></ManageClubs>
+                  <ClubsManagement></ClubsManagement>
                 </IsManager>
               ),
             },
@@ -173,7 +181,7 @@ const WebRouter = () => {
               ),
             },
             {
-              path: "/dashboard/addEvent",
+              path: "/dashboard/add-event/:clubId",
               element: (
                 <IsManager>
                   <AddEvents></AddEvents>
@@ -181,10 +189,10 @@ const WebRouter = () => {
               ),
             },
              {
-              path: "/dashboard/manage-events",
+              path: "/dashboard/events-management",
               element: (
                 <IsManager>
-                  <ManageEvent></ManageEvent>
+                  <EventsManagement></EventsManagement>
                 </IsManager>
               ),
             },
@@ -222,18 +230,10 @@ const WebRouter = () => {
             },
             // member
             {
-              path: "/dashboard/my-applications",
+              path: "/dashboard/my-clubs",
               element: (
                 <IsMember>
                   <MyApplications></MyApplications>
-                </IsMember>
-              ),
-            },
-            {
-              path: "/dashboard/edit-application/:id",
-              element: (
-                <IsMember>
-                  <EditApplication></EditApplication>
                 </IsMember>
               ),
             },

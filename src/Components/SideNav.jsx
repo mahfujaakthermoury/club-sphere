@@ -4,10 +4,10 @@ import {
   MdAssignment,
   MdAddBox,
   MdPeople,
-  MdAnalytics,
   MdOutlineAppRegistration,
   MdPayment,
   MdGroup,
+  MdEvent
 } from "react-icons/md";
 import { FiFileText, FiLogOut } from "react-icons/fi";
 import { IoHomeSharp } from "react-icons/io5";
@@ -24,7 +24,7 @@ const SideNav = ({ role }) => {
   const commonLinks = [
     { to: "/dashboard/home", label: "Dashboard", icon: <MdOutlineDashboard /> },
     {
-      to: "/dashboard/my-applications",
+      to: "/dashboard/my-clubs",
       label: "My Clubs",
       icon: <MdAssignment />,
       role: "member",
@@ -49,33 +49,31 @@ const SideNav = ({ role }) => {
       label: "Manage Users",
       icon: <MdPeople />,
     },
-    { to: "/dashboard/analytics", 
-      label: "Analytics", 
-      icon: <MdAnalytics /> },
+    { to: "/dashboard/manage-clubs", 
+      label: "Manage Clubs", 
+      icon: <FiFileText /> 
+    },
+    { to: "/dashboard/transactions", 
+      label: "Transactions", 
+      icon: <MdPayment /> 
+    },
   ];
 
   const managerLinks = [
-    { to: "/dashboard/add", 
-      label: "Add Club", 
-      icon: <MdAddBox /> },
     {
-      to: "/dashboard/manage-clubs",
-      label: "Manage Clubs",
-      icon: <FiFileText />,
-    },
-    { to: "/dashboard/addEvent", 
-      label: "Add Event", 
-      icon: <MdAddBox /> 
-    },
-     {
-      to: "/dashboard/manage-events",
-      label: "Manage Events",
+      to: "/dashboard/clubs-management",
+      label: "Clubs Management",
       icon: <FiFileText />,
     },
     {
       to: "/dashboard/club-members",
       label: "Club Members",
       icon: <MdGroup />,
+    },
+     {
+      to: "/dashboard/events-management",
+      label: "Events Management",
+      icon: <MdEvent />,
     },
     {
       to: "/dashboard/event-registrations",

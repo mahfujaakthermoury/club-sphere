@@ -32,7 +32,7 @@ import {
 
 const columnHelper = createColumnHelper();
 
-const ManageEvent = () => {
+const EventsManagement = () => {
   const axiosSecure = useAxiosSecure();
 
   const { user, theme } =
@@ -248,10 +248,6 @@ const ManageEvent = () => {
             one place.
           </p>
         </div>
-
-        <div className="h-14 w-14 rounded-3xl bg-[#682626]/10 text-[#cd974c] flex items-center justify-center text-3xl shadow-lg">
-          <MdEvent />
-        </div>
       </div>
 
       {/* Table */}
@@ -370,4 +366,4 @@ const ManageEvent = () => {
   );
 };
 
-export default ManageEvent;
+export default EventsManagement;

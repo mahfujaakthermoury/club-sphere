@@ -23,6 +23,7 @@ const PaymentSuccess = () => {
 
     const payload = {
       clubId: club._id,
+      managerEmail: club.managerEmail,
       clubImage:club.clubImage,
       category: club.category,
       clubName: club.clubName,
@@ -105,11 +106,11 @@ const PaymentSuccess = () => {
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={() => navigate("/dashboard/my-applications")}
+            onClick={() => navigate("/dashboard/my-clubs")}
             className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-[#682626] text-white font-bold rounded-full hover:bg-[#cd974c] transition-all duration-300"
           >
             <History fontSize="small" />
-            My Applications
+            My Applyed Clubs
           </button>
 
           <button

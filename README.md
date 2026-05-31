@@ -70,7 +70,6 @@ Monitor all transactions across the platform
 
 💳 Stripe Payment Integration (Test Mode)
 
-📊 Admin Analytics Dashboard
 
 🔎 Server-Side Search & Filtering
 

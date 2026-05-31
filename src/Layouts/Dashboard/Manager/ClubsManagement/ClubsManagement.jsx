@@ -15,14 +15,14 @@ import { useContext } from "react";
 import WebContext from "../../../../Context/WebContext";
 import { Link } from "react-router";
 import { HeadProvider, Title } from "react-head";
-import { MdEdit, MdDelete, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { MdEdit, MdDelete, MdNavigateBefore, MdNavigateNext, MdAddBox } from "react-icons/md";
 
 const columnHelper = createColumnHelper();
 
-const ManageClubs = () => {
+const ClubsManagement = () => {
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
-  const {  theme } = useContext(WebContext);
+  const { theme } = useContext(WebContext);
 
   // // Fetch user clubs
   // const {
@@ -51,6 +51,23 @@ const ManageClubs = () => {
     },
     retry: 1,
   });
+
+  //  const {
+  //   data: featuredClubs = [],
+  //   isLoading: isFeaturedLoading,
+  //   isError: isFeaturedError,
+  //   refetch,
+  // } = useQuery({
+  //   queryKey: ["all-featured-clubs", user?.email],
+  //   queryFn: async () => {
+  //     const res = await axiosPublic.get("clubs/user", {
+  //       params: { email: user?.email },
+  //     });
+  //     return res.data;
+  //   },
+  //   enabled: !!user?.email,
+  //   retry: 1,
+  // });
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -136,6 +153,20 @@ const ManageClubs = () => {
         </div>
       ),
     }),
+    columnHelper.display({
+      id: "addEvent",
+      header: "Add Event",
+      cell: (info) => (
+        <Link
+          to={`/dashboard/add-event/${info.row.original._id}`}
+          className="inline-flex items-center gap-2 px-3 py-2 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"
+          title="Add Event"
+        >
+          <MdAddBox size={18} />
+          Event
+        </Link>
+      ),
+    }),
   ];
 
   // Table instance for user clubs
@@ -167,28 +198,34 @@ const ManageClubs = () => {
       {/* Featured Clubs Table */}
       {!isFeaturedError && featuredClubs.length > 0 && (
         <div>
-          <h2
-            className={`md:text-3xl text-2xl font-bold tracking-tight mb-4 ${
-              theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
-            }`}
-          >
-            Featured Clubs
-          </h2>
+          <div className="flex justify-between mb-10 mt-5">
+            <h2
+              className={`md:text-3xl text-2xl font-bold tracking-tight mb-4 ${theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
+                }`}
+            >
+              Featured Clubs
+            </h2>
+            <Link
+              to={"/dashboard/add-club"}
+              className="mt-auto inline-flex items-center gap-2 text-center text-[#cd974c] px-5 py-2.5 rounded-full font-bold hover:bg-[#682626] hover:text-white transition-all duration-300"
+            >
+              <MdAddBox size={25} />
+              Add Club
+            </Link>
+          </div>
           <div
-            className={`overflow-hidden rounded-4xl border transition-all duration-300 ${
-              theme === "dark"
-                ? "bg-slate-900 border-slate-800"
-                : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
-            }`}
+            className={`overflow-hidden rounded-4xl border transition-all duration-300 ${theme === "dark"
+              ? "bg-slate-900 border-slate-800"
+              : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
+              }`}
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead
-                  className={`text-xs uppercase tracking-widest font-black ${
-                    theme === "dark"
-                      ? "bg-slate-800/50 text-slate-400"
-                      : "bg-gray-50 text-slate-500"
-                  }`}
+                  className={`text-xs uppercase tracking-widest font-black ${theme === "dark"
+                    ? "bg-slate-800/50 text-slate-400"
+                    : "bg-gray-50 text-slate-500"
+                    }`}
                 >
                   {featuredTable.getHeaderGroups().map((hg) => (
                     <tr key={hg.id}>
@@ -205,9 +242,8 @@ const ManageClubs = () => {
                   {featuredTable.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className={`transition-colors ${
-                        theme === "dark" ? "hover:bg-slate-800/30" : "hover:bg-gray-50/50"
-                      }`}
+                      className={`transition-colors ${theme === "dark" ? "hover:bg-slate-800/30" : "hover:bg-gray-50/50"
+                        }`}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="p-5 text-sm">
@@ -226,4 +262,4 @@ const ManageClubs = () => {
   );
 };
 
-export default ManageClubs;
+export default ClubsManagement;

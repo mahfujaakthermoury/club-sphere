@@ -217,6 +217,8 @@ const UpdateClub = () => {
           </button>
         </div>
       </form>
+
+      
     </div>
   );
 };
