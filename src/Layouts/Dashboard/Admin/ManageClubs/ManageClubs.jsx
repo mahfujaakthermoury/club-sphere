@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import useAxiosPublic from "../../../../Hook/useAxiosPublic";
 import DataLoader from "../../../../Components/DataLoader";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import WebContext from "../../../../Context/WebContext";
 import { HeadProvider, Title } from "react-head";
 
@@ -20,21 +20,28 @@ const columnHelper = createColumnHelper();
 const ManageClubs = () => {
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
+  const [page, setPage] = useState(1);
+  const limit = 9;
   const { theme } = useContext(WebContext);
 
   const {
-    data: clubs = [],
+    data,
     isLoading,
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["all-clubs"],
+    queryKey: ["all-clubs", page],
     queryFn: async () => {
-      const res = await axiosPublic.get("/clubs");
-      return res.data.data;
+      const res = await axiosPublic.get("/clubs", {
+        params: { page, limit },
+      });
+      return res.data;
     },
     retry: 1,
   });
+
+  const clubs = data?.data || [];
+  const totalPages = data?.totalPages || 1;
 
   const handleStatusUpdate = async (id, status) => {
     try {
@@ -108,13 +115,12 @@ const ManageClubs = () => {
 
         return (
           <span
-            className={`px-3 py-1 rounded-full text-xs font-bold ${
-              status === "approved"
+            className={`px-3 py-1 rounded-full text-xs font-bold ${status === "approved"
                 ? "bg-green-500/10 text-green-500"
                 : status === "rejected"
-                ? "bg-red-500/10 text-red-500"
-                : "bg-yellow-500/10 text-yellow-500"
-            }`}
+                  ? "bg-red-500/10 text-red-500"
+                  : "bg-yellow-500/10 text-yellow-500"
+              }`}
           >
             {status || "pending"}
           </span>
@@ -189,30 +195,27 @@ const ManageClubs = () => {
       {!isError && clubs.length > 0 && (
         <div>
           <h2
-            className={`md:text-3xl text-2xl font-bold tracking-tight mb-6 ${
-              theme === "dark"
+            className={`md:text-3xl text-2xl font-bold tracking-tight mb-6 ${theme === "dark"
                 ? "text-[#cd974c]"
                 : "text-[#682626]"
-            }`}
+              }`}
           >
             Manage Clubs
           </h2>
 
           <div
-            className={`overflow-hidden rounded-4xl border transition-all duration-300 ${
-              theme === "dark"
+            className={`overflow-hidden rounded-4xl border transition-all duration-300 ${theme === "dark"
                 ? "bg-slate-900 border-slate-800"
                 : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
-            }`}
+              }`}
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead
-                  className={`text-xs uppercase tracking-widest font-black ${
-                    theme === "dark"
+                  className={`text-xs uppercase tracking-widest font-black ${theme === "dark"
                       ? "bg-slate-800/50 text-slate-400"
                       : "bg-gray-50 text-slate-500"
-                  }`}
+                    }`}
                 >
                   {table.getHeaderGroups().map((hg) => (
                     <tr key={hg.id}>
@@ -235,11 +238,10 @@ const ManageClubs = () => {
                   {table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className={`transition-colors ${
-                        theme === "dark"
+                      className={`transition-colors ${theme === "dark"
                           ? "hover:bg-slate-800/30"
                           : "hover:bg-gray-50/50"
-                      }`}
+                        }`}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td
@@ -258,6 +260,28 @@ const ManageClubs = () => {
               </table>
             </div>
           </div>
+          {/* Pagination */}
+      <div className="mt-16 flex justify-center items-center gap-6">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-6 py-2 rounded-full border border-[#682626] font-bold disabled:opacity-40"
+        >
+          Prev
+        </button>
+
+        <span className="font-semibold">
+          Page {page} of {totalPages}
+        </span>
+
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-6 py-2 rounded-full bg-[#682626] text-white font-bold disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
         </div>
       )}
     </div>

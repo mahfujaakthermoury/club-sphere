@@ -46,10 +46,11 @@ const EventsManagement = () => {
   } = useQuery({
     queryKey: ["manager-events"],
     queryFn: async () => {
+      console.log("Logged User Email:", user?.email);
       const res = await axiosSecure.get(
         `/events/manager/${user?.email}`
       );
-
+       console.log("Events Response:", res.data);
       return res.data;
     },
     enabled: !!user?.email,
@@ -106,7 +107,7 @@ const EventsManagement = () => {
     }),
 
     columnHelper.accessor("eventImage", {
-      header: "Event",
+      header: "Image",
       cell: (info) => (
         <img
           src={info.getValue()}
@@ -125,7 +126,7 @@ const EventsManagement = () => {
           </span>
 
           <span className="text-[10px] uppercase tracking-widest opacity-50 font-black">
-            {info.row.original.category}
+            {info.row.original.clubName}
           </span>
         </div>
       ),
@@ -150,7 +151,7 @@ const EventsManagement = () => {
         <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-500 text-xs font-black w-fit">
           <MdPayments />
 
-          ${info.getValue()}
+          ${info.getValue() || "0"}
         </div>
       ),
     }),
@@ -184,6 +185,7 @@ const EventsManagement = () => {
           <Link
             to={`/dashboard/update-event/${info.row.original._id}`}
             className="p-2 bg-[#682626]/10 text-[#cd974c] hover:bg-[#682626] hover:text-white rounded-xl transition-all"
+            title="Edit"
           >
             <MdEdit size={18} />
           </Link>

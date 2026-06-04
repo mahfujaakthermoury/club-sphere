@@ -2,16 +2,18 @@ import { useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../Hook/useAxiosPublic";
 import WebContext from "../../../Context/WebContext";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import DataLoader from "../../../Components/DataLoader";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { HeadProvider, Title } from "react-head";
+import { MdCalendarToday } from "react-icons/md";
 
 const AllEvents = () => {
   const axiosPublic = useAxiosPublic();
   const { theme } = useContext(WebContext);
 
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
   const [category, setCategory] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("");
@@ -139,57 +141,89 @@ const AllEvents = () => {
               <div
                 key={item._id}
                 data-aos="zoom-in-up"
-
-                className={`group border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-2 hover:shadow-2xl ${theme === "dark"
+                className={`group border rounded-3xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-2 hover:shadow-2xl ${theme === "dark"
                   ? "bg-[#2a1d1d] border-[#3a2a2a]"
                   : "bg-white border-[#ecd9c6]"
                   }`}
               >
                 {/* Image */}
-                <div className="relative h-60 overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
                   <img
                     src={item.eventImage}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     alt="event"
                   />
-                  <div className="absolute inset-0 bg-liner-to-t from-black/60 to-transparent"></div>
+
+                  {/* Badge */}
+                  <div
+                    className={"absolute top-3 right-3 px-3 py-1 text-xs font-bold rounded-full bg-[#682626] text-white"}
+                  >
+                    {item.category}
+                  </div>
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 </div>
 
                 {/* Content */}
                 <div className="p-6 flex flex-col flex-1 gap-3">
+                  {/* Club Name */}
+                  <p
+                    className={`text-sm font-semibold flex justify-end ${theme === "dark" ? "text-[#cd974c]" : "text-[#d60e0e]"
+                      }`}
+                  >
+                    Club: {item.clubName}
+                  </p>
+
+                  {/* Event Title */}
                   <h2
-                    className={`text-lg font-bold ${theme === "dark"
-                      ? "text-[#cd974c]"
-                      : "text-[#682626]"
+                    className={`text-xl font-bold ${theme === "dark" ? "text-[#cd974c]" : "text-[#682626]"
                       }`}
                   >
                     {item.eventName}
                   </h2>
 
+                  {/* Description */}
                   <p
-                    className={`text-sm line-clamp-2 ${theme === "dark"
-                      ? "text-gray-400"
-                      : "text-[#7a6a58]"
+                    className={`text-sm line-clamp-3 ${theme === "dark" ? "text-gray-400" : "text-[#7a6a58]"
                       }`}
                   >
                     {item.description}
                   </p>
 
-                  <div className="flex items-center gap-2 text-sm mt-2">
-                    <HiOutlineLocationMarker className="text-[#682626]" />
-                    <span>{item.location}</span>
+
+                  <div className="flex justify-between mb-2">
+                    {/* Date + Location */}
+                    <div className="flex flex-col gap-1 text-sm mt-2">
+                      <span className="opacity-80 flex items-center text-[#682626]">
+                        <MdCalendarToday /> {new Date(item.eventDate).toLocaleDateString()}
+                      </span>
+
+                      <span className="opacity-80 flex items-center">
+                        <HiOutlineLocationMarker className="text-[#682626] size-4" />
+                        {item.location}</span>
+                    </div>
+
+                    {/* Fee */}
+                    <div className="font-bold mt-5">
+                      {item.isPaid ? (
+                        <span className="text-emerald-700">
+                          Fee: ${item.eventFee}
+                        </span>
+                      ) : (
+                        <span className="text-green-700">Free Entry</span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="mt-4 font-bold">
-                    Fees: ${item.membershipFee || 0}
-                  </div>
-
-                  <Link
-                    to={`/club-details/${item._id}`}
-                    className="mt-auto inline-block text-center border-2 border-[#682626] text-[#cd974c] px-8 py-2.5 rounded-full font-bold hover:bg-[#682626] hover:text-white transition-all duration-300"
-                  >
-                    View Details
-                  </Link>
+                  {/* Button */}
+                  <div className="flex  pt-6 border-t border-[#3a2a2a]/30">
+              <button
+                onClick={() => navigate("/payment")}
+                className="w-full border-2 border-[#682626] text-[#cd974c] px-10 py-3 rounded-full font-bold hover:bg-[#682626] hover:text-white transition-all duration-300"
+              >
+                Registration Now
+              </button>
+            </div>
                 </div>
               </div>
             ))}

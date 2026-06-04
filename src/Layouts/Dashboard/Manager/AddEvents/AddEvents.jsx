@@ -68,9 +68,10 @@ const AddEvents = () => {
         managerEmail: club.managerEmail,
         eventName: f.eventName.value,
         description: f.description.value,
-        location: f.location.value,
+        location: club.location,
         eventImage: finalImage,
         eventFee: Number(f.eventFee.value),
+        eventDate: new Date(f.eventDate.value),
         status: "pending",
         createdAt: new Date().toISOString(),
       };
@@ -131,7 +132,7 @@ const AddEvents = () => {
             name="clubName"
             value={club?.clubName || ""}
             readOnly
-             className={`${inputClass} font-bold`}
+            className={`${inputClass} font-bold`}
             placeholder="e.g. Photography Club"
           />
         </div>
@@ -175,11 +176,21 @@ const AddEvents = () => {
             <label className={labelClass}>Location *</label>
             <input
               name="location"
-              required
+              value={club?.location || ""}
+              readOnly
               className={inputClass}
               placeholder="City or Area"
             />
           </div>
+        </div>
+        <div>
+          <label className={labelClass}>Event Date *</label>
+          <input
+            type="date"
+            name="eventDate"
+            required
+            className={inputClass}
+          />
         </div>
 
         {/* Banner Upload */}

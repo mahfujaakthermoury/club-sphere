@@ -70,8 +70,8 @@ const PaymentHistory = () => {
         return (
           <span
             className={`px-3 py-1 rounded-full text-xs font-bold ${type === "membership"
-                ? "bg-blue-500/10 text-blue-500"
-                : "bg-purple-500/10 text-purple-500"
+                ? "bg-amber-500/10 text-amber-800"
+                : "bg-amber-500/10 text-amber-600"
               }`}
           >
             {type}

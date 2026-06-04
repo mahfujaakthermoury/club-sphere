@@ -44,19 +44,37 @@ const ManageAppliedApplications = () => {
     },
   });
 
+  // const {
+  //   data: applications = [],
+  //   isLoading,
+  //   isError,
+  // } = useQuery({
+  //   queryKey: ["applications", "all", userData?.managerFor],
+  //   queryFn: async () => {
+  //     const res = await AxiosPublic.get(`/applications/${userData?.managerFor}`);
+
+  //     console.log("userData:", userData);
+  //     console.log("managerFor:", userData?.managerFor);
+  //     return res.data;
+  //   },
+  //   enabled: !!userData?.managerFor,
+  // });
+
   const {
     data: applications = [],
     isLoading,
-    isError,
   } = useQuery({
-    queryKey: ["applications", "all", userData?.managerFor],
+    queryKey: ["applications", user?.email],
+    enabled: !!user?.email,
     queryFn: async () => {
       const res = await AxiosPublic.get(
-        `/applications/${userData?.managerFor}`
+        `/applications/${user.email}`
       );
+
+      console.log(res.data);
+
       return res.data;
     },
-    enabled: !!userData?.managerFor,
   });
 
   const handleSendFeedback = async () => {
@@ -156,16 +174,24 @@ const ManageAppliedApplications = () => {
       header: "Club",
       cell: (info) => (
         <div className="flex flex-col">
-          <span className="font-black text-[10px] uppercase text-sky-500 tracking-wider leading-none mb-1">
+          <span className="font-black text-[10px] uppercase text-[#cd974c] tracking-wider leading-none mb-1">
             {info.getValue()}
           </span>
           <span
             className="text-xs font-bold line-clamp-1 opacity-80"
             title={info.row.original.clubName}
           >
-            {info.row.original.clubName}
+            {info.row.original.location}
           </span>
         </div>
+      ),
+    }),
+    columnHelper.accessor("appliedDate", {
+      header: "Join Date",
+      cell: (info) => (
+        <span className="font-black text-xs">
+          {new Date(info.getValue()).toLocaleDateString()}
+        </span>
       ),
     }),
     columnHelper.accessor("membershipFee", {
@@ -185,7 +211,7 @@ const ManageAppliedApplications = () => {
         };
         return (
           <span
-            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${styles[status]}`}
+            className={`px-3 py-1 rounded-2xl text-[10px] font-black uppercase tracking-tighter ${styles[status]}`}
           >
             {status}
           </span>
@@ -211,7 +237,7 @@ const ManageAppliedApplications = () => {
                 setFeedbackOpenFor(app);
                 setFeedbackText(app.feedback || "");
               }}
-              className="p-2 bg-sky-500/10 text-sky-500 hover:bg-sky-500 hover:text-white rounded-xl transition-all"
+              className="p-2 bg-amber-950/10 text-[#6a2c2c] hover:bg-[#682626] hover:text-white rounded-xl transition-all"
               title="Feedback"
             >
               <MdFeedback size={18} />
@@ -261,11 +287,10 @@ const ManageAppliedApplications = () => {
 
       <div className="mb-8">
         <h2
-          className={`md:text-3xl text-2xl font-black tracking-tight ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
+          className={`md:text-3xl text-2xl font-black tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
         >
-          Membership Application 
+          Membership Application
         </h2>
         <p className="opacity-60 font-medium italic text-sm uppercase tracking-widest">
           Manager Control Panel
@@ -274,20 +299,18 @@ const ManageAppliedApplications = () => {
 
       {/* Modern Table Card */}
       <div
-        className={`overflow-hidden rounded-4xl border transition-all ${
-          theme === "dark"
-            ? "bg-slate-900 border-slate-800"
-            : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
-        }`}
+        className={`overflow-hidden rounded-2xl border transition-all ${theme === "dark"
+          ? "bg-slate-900 border-slate-800"
+          : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
+          }`}
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead
-              className={`text-[10px] uppercase tracking-[0.2em] font-black border-b ${
-                theme === "dark"
-                  ? "bg-slate-800/50 border-slate-800 text-slate-500"
-                  : "bg-gray-50 border-gray-100 text-slate-400"
-              }`}
+              className={`text-[10px] uppercase tracking-[0.2em] font-black border-b ${theme === "dark"
+                ? "bg-slate-800/50 border-slate-800 text-slate-500"
+                : "bg-gray-50 border-gray-100 text-slate-400"
+                }`}
             >
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
@@ -306,7 +329,7 @@ const ManageAppliedApplications = () => {
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:bg-sky-500/5 transition-colors group"
+                  className="hover:bg-amber-500/5 transition-colors group"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="p-6">
@@ -331,14 +354,14 @@ const ManageAppliedApplications = () => {
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="px-5 py-2 rounded-2xl bg-slate-500/10 text-xs font-black uppercase disabled:opacity-20 hover:bg-sky-500 hover:text-white transition-all"
+              className="px-5 py-2 rounded-2xl bg-slate-500/10 text-xs font-black uppercase disabled:opacity-20 hover:bg-[#682626] hover:text-white transition-all"
             >
               Prev
             </button>
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="px-5 py-2 rounded-2xl bg-sky-500 text-white text-xs font-black uppercase disabled:opacity-20 hover:bg-sky-600 transition-all shadow-lg shadow-sky-500/20"
+              className="px-5 py-2 rounded-2xl bg-[#682626] text-white text-xs font-black uppercase disabled:opacity-20 hover:bg-[#682626] transition-all shadow-lg shadow-amber-500/20"
             >
               Next
             </button>
@@ -350,29 +373,24 @@ const ManageAppliedApplications = () => {
       {selected && (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div
-            className={`w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden ${
-              theme === "dark"
-                ? "bg-slate-900 border border-slate-800"
-                : "bg-white"
-            }`}
+            className={`w-full max-w-3xl rounded-2xl py-5 shadow-2xl overflow-hidden ${theme === "dark"
+              ? "bg-slate-900 border border-slate-800"
+              : "bg-white"
+              }`}
           >
             <div className="p-10 relative">
               <button
                 onClick={() => setSelected(null)}
-                className="absolute top-8 right-8 p-2 rounded-full hover:bg-red-500/10 text-red-500 transition-colors"
+                className="absolute top-8 right-8 p-2 rounded-2xl hover:bg-red-500/10 text-red-500 transition-colors"
               >
                 <MdClose size={28} />
               </button>
 
-              <div className="flex items-center gap-3 text-sky-500 font-black text-xs uppercase tracking-widest mb-4">
-                <MdSchool size={18} /> Full Application Dossier
-              </div>
-
               <h3 className="text-3xl font-black mb-1 leading-tight">
                 {selected.clubName}
               </h3>
-              <p className="opacity-60 font-bold uppercase text-xs mb-8">
-                {selected.clubName}
+              <p className="opacity-60 font-bold uppercase text-xs mb-10">
+                {selected.location}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -395,7 +413,7 @@ const ManageAppliedApplications = () => {
                     label="Current Status"
                     value={selected.status || "Pending"}
                   />
-                  <div className="p-4 rounded-3xl bg-slate-500/5 border border-slate-500/10">
+                  <div className="p-4 rounded-2xl bg-slate-500/5 border border-slate-500/10">
                     <span className="text-[10px] font-black uppercase opacity-40 block mb-2">
                       Feedback Provided
                     </span>
@@ -414,12 +432,11 @@ const ManageAppliedApplications = () => {
       {feedbackOpenFor && (
         <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in zoom-in duration-300">
           <div
-            className={`w-full max-w-md rounded-[2.5rem] p-8 ${
-              theme === "dark" ? "bg-slate-900" : "bg-white shadow-2xl"
-            }`}
+            className={`w-full max-w-2xl rounded-2xl p-8 ${theme === "dark" ? "bg-slate-900" : "bg-white shadow-2xl"
+              }`}
           >
             <h4 className="text-xl font-black mb-2 flex items-center gap-2">
-              <MdFeedback className="text-sky-500" /> Submit Feedback
+              <MdFeedback className="text-amber-900" /> Submit Feedback
             </h4>
             <p className="text-xs opacity-50 mb-6 font-bold uppercase">
               {feedbackOpenFor.clubName}
@@ -429,23 +446,22 @@ const ManageAppliedApplications = () => {
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
               placeholder="Enter feedback for the applicant..."
-              className={`w-full h-40 p-5 rounded-3xl border outline-none transition-all ${
-                theme === "dark"
-                  ? "bg-slate-800 border-slate-700 text-white focus:border-sky-500"
-                  : "bg-gray-50 border-gray-100 focus:bg-white focus:border-sky-500"
-              }`}
+              className={`w-full h-40 p-5 rounded-2xl border outline-none transition-all ${theme === "dark"
+                ? "bg-slate-800 border-slate-700 text-white focus:border-amber-500"
+                : "bg-gray-50 border-gray-100 focus:bg-white focus:border-amber-500"
+                }`}
             />
 
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => setFeedbackOpenFor(null)}
-                className="flex-1 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest opacity-50 hover:opacity-100 transition-all"
+                className="flex-1 py-3 rounded-2xl border-2 border-amber-500 font-black uppercase text-[10px] tracking-widest opacity-50 hover:opacity-100 transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSendFeedback}
-                className="flex-1 py-3 rounded-2xl bg-sky-500 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-sky-500/20"
+                className="flex-1 py-3 rounded-2xl bg-amber-900 text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-amber-500/20"
               >
                 Save Feedback
               </button>
@@ -460,7 +476,7 @@ const ManageAppliedApplications = () => {
 // Sub-component for Details
 const DetailItem = ({ icon, label, value, subValue }) => (
   <div className="flex gap-4 items-start">
-    <div className="p-3 rounded-2xl bg-sky-500/10 text-sky-500">{icon}</div>
+    <div className="p-3 rounded-2xl bg-amber-900/10 text-amber-900">{icon}</div>
     <div>
       <span className="text-[10px] font-black uppercase opacity-40 block mb-1">
         {label}

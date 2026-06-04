@@ -8,7 +8,7 @@ import DataLoader from "../../../../Components/DataLoader";
 import WebContext from "../../../../Context/WebContext";
 import { MdArrowBack, MdCloudUpload } from "react-icons/md";
 
-const UpdateClub = () => {
+const UpdateEvent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
@@ -18,9 +18,9 @@ const UpdateClub = () => {
 
   // Fetch existing club data
   const { data: existing, isLoading } = useQuery({
-    queryKey: ["club", id],
+    queryKey: ["event", id],
     queryFn: async () => {
-      const res = await axiosPublic.get(`/club/data/${id}`);
+      const res = await axiosPublic.get(`/event/update/${id}`);
       return res.data;
     },
     retry: 0,
@@ -34,8 +34,8 @@ const UpdateClub = () => {
       const f = e.target;
 
       // Handle banner: either file upload or URL
-      let bannerImage = existing.bannerImage;
-      const file = f.bannerImageFile.files[0];
+      let eventImage = existing.eventImage;
+      const file = f.eventImageFile.files[0];
       if (file) {
         // Example: upload file to server and get URL
         const formData = new FormData();
@@ -43,25 +43,27 @@ const UpdateClub = () => {
         const uploadRes = await axiosSecure.post("/upload/banner", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        bannerImage = uploadRes.data.url;
-      } else if (f.bannerImageUrl.value.trim()) {
-        bannerImage = f.bannerImageUrl.value.trim();
+        eventImage = uploadRes.data.url;
+      } else if (f.eventImageUrl.value.trim()) {
+        eventImage = f.eventImageUrl.value.trim();
       }
 
       const payload = {
-        clubName: f.clubName.value.trim(),
+        // clubName: f.eventName.value.trim(),,
+        eventName: f.eventName.value.trim(),
         description: f.description.value.trim(),
-        category: f.category.value.trim(),
-        location: f.location.value.trim(),
-        bannerImage,
-        membershipFee: Number(f.membershipFee.value || 0),
+        //category:f.eventDate.value.trim(),
+        eventDate: f.eventDate.value.trim(),
+        // location,
+        eventImage,
+        eventFee: Number(f.eventFee.value || 0),
       };
 
-      const res = await axiosSecure.put(`/club/update/${id}`, payload);
+      const res = await axiosSecure.put(`/event/update/${id}`, payload);
 
       if (res?.status === 200) {
-        toast.success("Club updated successfully!");
-        navigate("/dashboard/manage-clubs");
+        toast.success("Event updated successfully!");
+        navigate("/dashboard/events-management");
       }
     } catch (err) {
       toast.error(err.message);
@@ -69,7 +71,7 @@ const UpdateClub = () => {
       setSubmitting(false);
     }
   };
-
+console.log("Existing Event:", existing);
   if (isLoading) return <DataLoader />;
   if (!existing)
     return (
@@ -78,11 +80,10 @@ const UpdateClub = () => {
       </div>
     );
 
-  const inputClass = `w-full px-4 py-3 rounded-2xl border outline-none transition-all ${
-    theme === "dark"
+  const inputClass = `w-full px-4 py-3 rounded-2xl border outline-none transition-all ${theme === "dark"
       ? "bg-slate-900 border-slate-800 text-white focus:border-sky-500"
       : "bg-gray-50 border-gray-200 text-slate-700 focus:border-sky-500 focus:bg-white"
-  }`;
+    }`;
   const labelClass =
     "text-xs font-black uppercase tracking-widest opacity-60 mb-2 block ml-1";
 
@@ -97,31 +98,29 @@ const UpdateClub = () => {
           <MdArrowBack size={20} />
         </button>
         <h2
-          className={`md:text-3xl text-2xl font-black tracking-tight ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
+          className={`md:text-3xl text-2xl font-black tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
         >
-          Update Club
+          Update Event
         </h2>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className={`p-8 rounded-3xl border shadow-xl transition-all ${
-          theme === "dark"
+        className={`p-8 rounded-3xl border shadow-xl transition-all ${theme === "dark"
             ? "bg-slate-900 border-slate-800"
             : "bg-white border-gray-100"
-        }`}
+          }`}
       >
-        {/* Club Name */}
+        {/* Event Name */}
         <div className="mb-6">
           <label className={labelClass}>Club Name *</label>
           <input
-            name="clubName"
-            defaultValue={existing.clubName}
+            name="eventName"
+            defaultValue={existing.eventbName}
             required
             className={inputClass}
-            placeholder="e.g. Photography Club"
+            placeholder="e.g. JavaScript Fundamentals Workshop"
           />
         </div>
 
@@ -134,7 +133,7 @@ const UpdateClub = () => {
             required
             rows="4"
             className={inputClass}
-            placeholder="Describe your club and its activities..."
+            placeholder="Describe your event and its activities..."
           ></textarea>
         </div>
 
@@ -163,20 +162,29 @@ const UpdateClub = () => {
           </div>
         </div>
 
+        <div className="mb-8">
+          <label className={labelClass}>Event Date</label>
+          <input
+            type="date"
+            name="eventDate"
+            defaultValue={existing.eventDate}
+            className={inputClass}
+          />
+        </div>
+
         {/* Banner Upload */}
         <div className="mb-6">
           <label className={labelClass}>Banner Image *</label>
           <div
-            className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${
-              theme === "dark"
+            className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${theme === "dark"
                 ? "border-slate-700 hover:border-[#cd974c]"
                 : "border-gray-200 hover:border-[#682626]"
-            }`}
+              }`}
           >
             <MdCloudUpload className="mx-auto text-4xl text-[#cd974c] mb-2" />
             <input
               type="file"
-              name="bannerImageFile"
+              name="eventImageFile"
               accept="image/*"
               className="absolute inset-0 opacity-0 cursor-pointer"
             />
@@ -184,20 +192,20 @@ const UpdateClub = () => {
           </div>
 
           <input
-            name="bannerImageUrl"
-            defaultValue={existing.bannerImage}
+            name="eventImageUrl"
+            defaultValue={existing.eventImage}
             className={`${inputClass} mt-4`}
             placeholder="Or paste image URL..."
           />
         </div>
 
-        {/* Membership Fee */}
+        {/* Event Fee */}
         <div className="mb-8">
           <label className={labelClass}>Membership Fee (0 for Free)</label>
           <input
             type="number"
-            name="membershipFee"
-            defaultValue={existing.membershipFee || 0}
+            name="eventFee"
+            defaultValue={existing.eventFee || 0}
             className={inputClass}
           />
         </div>
@@ -207,13 +215,12 @@ const UpdateClub = () => {
           <button
             type="submit"
             disabled={submitting}
-            className={`px-10 py-4 font-bold rounded-2xl transition-all shadow-lg ${
-              theme === "dark"
+            className={`px-10 py-4 font-bold rounded-2xl transition-all shadow-lg ${theme === "dark"
                 ? "bg-[#cd974c] text-slate-900 hover:bg-[#e0b354]"
                 : "bg-[#682626] text-white hover:bg-[#520f0f]"
-            } disabled:bg-gray-400`}
+              } disabled:bg-gray-400`}
           >
-            {submitting ? "Updating..." : "Update Club"}
+            {submitting ? "Updating..." : "Update Event"}
           </button>
         </div>
       </form>
@@ -221,4 +228,4 @@ const UpdateClub = () => {
   );
 };
 
-export default UpdateClub;
+export default UpdateEvent;

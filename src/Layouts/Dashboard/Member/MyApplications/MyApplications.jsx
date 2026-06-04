@@ -83,10 +83,10 @@ const MyApplications = () => {
               <span
                 className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
                   app.status === "completed"
-                    ? "bg-emerald-500 text-white"
+                    ? "bg-[#1b9023] text-white"
                     : app.status === "processing"
                     ? "bg-amber-500 text-white"
-                    : "bg-[#1b9023] text-white"
+                    : "bg-[#de0202] text-white"
                 }`}
               >
                 {app.status || "pending"}

@@ -1,15 +1,12 @@
-import { useState, useContext } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import WebContext from "../../../../Context/WebContext";
 import useAxiosPublic from "../../../../Hook/useAxiosPublic";
-import useAxiosSecure from "../../../../Hook/useAxiosSecure";
+//import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import DataLoader from "../../../../Components/DataLoader";
 import { HeadProvider, Title } from "react-head";
 import {
-  MdEdit,
-  MdDelete,
-  MdStar,
   MdSchool,
   MdEvent,
   MdChatBubbleOutline,
@@ -18,15 +15,12 @@ import {
 const MyEvents = () => {
   const { user, theme } = useContext(WebContext);
   const axiosPublic = useAxiosPublic();
-  const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient();
+  //const axiosSecure = useAxiosSecure();
 
-  const [editing, setEditing] = useState(null);
-
-  const { data: reviews = [], isLoading } = useQuery({
+  const { data: events = [], isLoading } = useQuery({
     queryKey: ["MyEvents", user?.email],
     queryFn: async () => {
-      const res = await axiosPublic.get("/reviews", {
+      const res = await axiosPublic.get("/events", {
         params: { email: user?.email },
       });
       return res.data;
@@ -34,30 +28,6 @@ const MyEvents = () => {
     enabled: !!user?.email,
   });
 
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Delete Review?",
-      text: "This cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      background: theme === "dark" ? "#0f172a" : "#fff",
-      color: theme === "dark" ? "#fff" : "#000",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await axiosSecure.delete(`/reviews/${id}`);
-        if (res.status === 200) {
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            showConfirmButton: false,
-            timer: 1000,
-          });
-          queryClient.invalidateQueries(["MyEvents", user.email]);
-        }
-      }
-    });
-  };
 
   if (isLoading) return <DataLoader />;
 
@@ -73,14 +43,14 @@ const MyEvents = () => {
             theme === "dark" ? "text-white" : "text-slate-900"
           }`}
         >
-          My Event
+          My Event Registrations
         </h2>
         <p className="opacity-60 font-medium italic text-sm uppercase tracking-widest">
           Track and manage your club events requests
         </p>
       </div>
 
-      {reviews.length === 0 ? (
+      {events.length === 0 ? (
         <div className="py-20 text-center opacity-40 italic">
           You haven't requested any club events yet.
         </div>
@@ -102,20 +72,19 @@ const MyEvents = () => {
                 }`}
               >
                 <tr>
-                  <th className="p-6">club & Club</th>
-                  <th className="p-6">Review Comment</th>
-                  <th className="p-6 text-center">Rating</th>
+                  <th className="p-6"> Event Name</th>
+                  <th className="p-6">Club</th>
                   <th className="p-6">Date</th>
-                  <th className="p-6 text-right">Actions</th>
+                  <th className="p-6 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-500/10">
-                {reviews.map((rev) => (
+                {events.map((event) => (
                   <tr
-                    key={rev._id}
+                    key={event._id}
                     className="hover:bg-sky-500/5 transition-colors group"
                   >
-                    {/* club & Club */}
+                    {/* Event  */}
                     <td className="p-6 max-w-[250px]">
                       <div className="flex items-start gap-3">
                         <div className="mt-1 p-2 rounded-xl bg-sky-500/10 text-sky-500">
@@ -123,29 +92,22 @@ const MyEvents = () => {
                         </div>
                         <div>
                           <p className="font-bold text-sm leading-tight mb-1">
-                            {rev.clubName}
+                            {event.eventName}
                           </p>
                           <p className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                            {rev.clubName}
+                            {event.clubName}
                           </p>
                         </div>
                       </div>
                     </td>
 
-                    {/* Comment */}
+                    {/* Club */}
                     <td className="p-6">
                       <div className="flex items-start gap-2 opacity-80 italic text-sm max-w-xs">
                         <MdChatBubbleOutline className="mt-1 shrink-0 text-slate-400" />
-                        <p className="line-clamp-2" title={rev.reviewComment}>
-                          "{rev.reviewComment}"
+                        <p className="line-clamp-2" title={event.clubName}>
+                          "{event.clubName}"
                         </p>
-                      </div>
-                    </td>
-
-                    {/* Rating */}
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 font-black text-xs">
-                        <MdStar /> {rev.ratingPoint}
                       </div>
                     </td>
 
@@ -153,52 +115,30 @@ const MyEvents = () => {
                     <td className="p-6">
                       <div className="flex items-center gap-1 text-[10px] font-bold opacity-60">
                         <MdEvent />{" "}
-                        {new Date(rev.reviewDate).toLocaleDateString()}
+                        {new Date(event.eventDate).toLocaleDateString()}
                       </div>
                     </td>
 
-                    {/* Actions */}
+                    {/* Status */}
                     <td className="p-6 text-right">
                       <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => setEditing(rev)}
-                          className="p-2 bg-sky-500/10 text-sky-500 hover:bg-sky-500 hover:text-white rounded-xl transition-all shadow-sm"
-                          title="Edit Review"
-                        >
-                          <MdEdit size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(rev._id)}
-                          className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-sm"
-                          title="Delete Review"
-                        >
-                          <MdDelete size={18} />
-                        </button>
+                         <span
+                className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
+                  event.status === "completed"
+                    ? "bg-[#1b9023] text-white"
+                    : event.status === "processing"
+                    ? "bg-amber-500 text-white"
+                    : "bg-[#575656] text-white"
+                }`}
+              >
+                {event.status || "pending"}
+              </span>
                       </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal (Portal style via component) */}
-      {editing && (
-        <div className="fixed inset-0 z-150 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div
-            className={`w-full max-w-lg rounded-[2.5rem] p-2 ${
-              theme === "dark" ? "bg-slate-800" : "bg-white"
-            }`}
-          >
-            <ReviewAddEdit
-              review={editing}
-              onClose={() => {
-                setEditing(null);
-                queryClient.invalidateQueries(["MyEvents", user.email]);
-              }}
-            />
           </div>
         </div>
       )}

@@ -21,7 +21,7 @@ const Transactions = () => {
   const {
     data: payments = [],
     isLoading,
-    
+
   } = useQuery({
     queryKey: ["payments"],
     queryFn: async () => {
@@ -47,11 +47,11 @@ const Transactions = () => {
       ),
     }),
 
-    columnHelper.accessor("amount", {
-      header: "Amount",
+    columnHelper.accessor("clubName", {
+      header: "Club Name",
       cell: (info) => (
-        <span className="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 font-bold text-xs">
-          ${info.getValue()}
+        <span className="font-medium">
+          {info.getValue()}
         </span>
       ),
     }),
@@ -63,11 +63,10 @@ const Transactions = () => {
 
         return (
           <span
-            className={`px-3 py-1 rounded-full text-xs font-bold ${
-              type === "membership"
-                ? "bg-blue-500/10 text-blue-500"
-                : "bg-purple-500/10 text-purple-500"
-            }`}
+            className={`px-3 py-1 rounded-full text-xs font-bold ${type === "membership"
+                ? "bg-amber-500/10 text-amber-800"
+                : "bg-amber-500/10 text-amber-600"
+              }`}
           >
             {type}
           </span>
@@ -75,11 +74,11 @@ const Transactions = () => {
       },
     }),
 
-    columnHelper.accessor("clubName", {
-      header: "Club Name",
+    columnHelper.accessor("amount", {
+      header: "Amount",
       cell: (info) => (
-        <span className="font-medium">
-          {info.getValue()}
+        <span className="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 font-bold text-xs">
+          ${info.getValue()}
         </span>
       ),
     }),
@@ -114,20 +113,18 @@ const Transactions = () => {
       </HeadProvider>
 
       <div
-        className={`rounded-3xl border overflow-hidden ${
-          theme === "dark"
+        className={`rounded-3xl border overflow-hidden ${theme === "dark"
             ? "bg-slate-900 border-slate-800"
             : "bg-white border-gray-100 shadow-xl"
-        }`}
+          }`}
       >
         {/* Header */}
         <div className="p-6 border-b border-gray-200/10">
           <h2
-            className={`text-2xl font-bold ${
-              theme === "dark"
+            className={`text-2xl font-bold ${theme === "dark"
                 ? "text-[#cd974c]"
                 : "text-[#682626]"
-            }`}
+              }`}
           >
             Payment Transactions
           </h2>
@@ -137,11 +134,10 @@ const Transactions = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead
-              className={`text-xs uppercase tracking-widest font-bold ${
-                theme === "dark"
+              className={`text-xs uppercase tracking-widest font-bold ${theme === "dark"
                   ? "bg-slate-800 text-slate-400"
                   : "bg-gray-50 text-slate-500"
-              }`}
+                }`}
             >
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
@@ -161,11 +157,10 @@ const Transactions = () => {
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className={`transition hover:${
-                    theme === "dark"
+                  className={`transition hover:${theme === "dark"
                       ? "bg-slate-800/30"
                       : "bg-gray-50/40"
-                  }`}
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="p-5 text-sm">

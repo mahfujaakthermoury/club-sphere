@@ -35,6 +35,7 @@ import Transactions from "../Layouts/Dashboard/Admin/Transactions/Transactions";
 import ClubsManagement from "../Layouts/Dashboard/Manager/ClubsManagement/ClubsManagement";
 import EventsManagement from "../Layouts/Dashboard/Manager/EventsManagement/EventsManagement";
 import Analytics from "../Layouts/Dashboard/Admin/Analytics/Analytics";
+import EventDetails from "../Layouts/Main/EventDetails/EventDetails";
 
 const WebRouter = () => {
   const router = createBrowserRouter([
@@ -56,16 +57,20 @@ const WebRouter = () => {
               element: <AllClubs></AllClubs>,
             },
             {
-              path: "/all-events",
-              element: <AllEvents></AllEvents>,
+              path: "/club-details/:id",
+              element: <ClubDetails></ClubDetails>,
             },
             {
               path: "/about",
               element: <About></About>,
             },
             {
-              path: "/club-details/:id",
-              element: <ClubDetails></ClubDetails>,
+              path: "/all-events",
+              element: <AllEvents></AllEvents>,
+            },
+            {
+              path: "/event-details/:id",
+              element: <EventDetails></EventDetails>,
             },
             {
               path: "/login",
@@ -140,7 +145,7 @@ const WebRouter = () => {
                 </IsAdmin>
               ),
             },
-             {
+            {
               path: "/dashboard/manage-clubs",
               element: (
                 <IsAdmin>
@@ -197,7 +202,7 @@ const WebRouter = () => {
                 </IsManager>
               ),
             },
-             {
+            {
               path: "/dashboard/events-management",
               element: (
                 <IsManager>
@@ -205,7 +210,7 @@ const WebRouter = () => {
                 </IsManager>
               ),
             },
-             {
+            {
               path: "/dashboard/update-event/:id",
               element: (
                 <IsManager>

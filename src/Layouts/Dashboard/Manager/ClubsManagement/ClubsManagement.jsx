@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import useAxiosPublic from "../../../../Hook/useAxiosPublic";
 import DataLoader from "../../../../Components/DataLoader";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import WebContext from "../../../../Context/WebContext";
 import { Link } from "react-router";
 import { HeadProvider, Title } from "react-head";
@@ -22,6 +22,8 @@ const columnHelper = createColumnHelper();
 const ClubsManagement = () => {
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
+  const [page, setPage] = useState(1);
+    const limit = 9;
   const { theme } = useContext(WebContext);
 
   // // Fetch user clubs
@@ -39,18 +41,23 @@ const ClubsManagement = () => {
 
   // Fetch featured clubs
   const {
-    data: featuredClubs = [],
+    data,
     isLoading: isFeaturedLoading,
     isError: isFeaturedError,
     refetch,
   } = useQuery({
-    queryKey: ["all-featured-clubs"],
+    queryKey: ["all-featured-clubs", page],
     queryFn: async () => {
-      const res = await axiosPublic.get("clubs");
-      return res.data.data;
+      const res = await axiosPublic.get("clubs", {
+        params: { page, limit },
+      });
+      return res.data;
     },
     retry: 1,
   });
+
+  const featuredClubs = data?.data || [];
+  const totalPages = data?.totalPages || 1;
 
   //  const {
   //   data: featuredClubs = [],
@@ -256,6 +263,28 @@ const ClubsManagement = () => {
               </table>
             </div>
           </div>
+            {/* Pagination */}
+      <div className="mt-16 flex justify-center items-center gap-6">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-6 py-2 rounded-full border border-[#682626] font-bold disabled:opacity-40"
+        >
+          Prev
+        </button>
+
+        <span className="font-semibold">
+          Page {page} of {totalPages}
+        </span>
+
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-6 py-2 rounded-full bg-[#682626] text-white font-bold disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
         </div>
       )}
     </div>

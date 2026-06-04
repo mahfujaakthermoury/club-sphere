@@ -61,7 +61,7 @@ const UpdateClub = () => {
 
       if (res?.status === 200) {
         toast.success("Club updated successfully!");
-        navigate("/dashboard/manage-clubs");
+        navigate("/dashboard/clubs-management");
       }
     } catch (err) {
       toast.error(err.message);

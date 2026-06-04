@@ -55,6 +55,7 @@ const CheckoutForm = () => {
       if (totalAmount === 0) {
         await axiosPublic.post("/payments", {
           clubId: club._id,
+          clubName: club.clubName,
           amount: 0,
           transactionId: "FREE_MEMBER_" + Date.now(),
           email: user?.email,
@@ -112,6 +113,7 @@ const CheckoutForm = () => {
       if (result.paymentIntent?.status === "succeeded") {
         await axiosPublic.post("/payments", {
           clubId: club._id,
+          clubName: club.clubName,
           amount: totalAmount,
           transactionId: result.paymentIntent.id,
           email: user?.email,
