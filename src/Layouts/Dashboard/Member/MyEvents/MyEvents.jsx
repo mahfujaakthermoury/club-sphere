@@ -12,6 +12,7 @@ import {
   MdChatBubbleOutline,
 } from "react-icons/md";
 
+
 const MyEvents = () => {
   const { user, theme } = useContext(WebContext);
   const axiosPublic = useAxiosPublic();
@@ -20,9 +21,12 @@ const MyEvents = () => {
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["MyEvents", user?.email],
     queryFn: async () => {
-      const res = await axiosPublic.get("/events", {
+      const res = await axiosPublic.get("/registrations", {
         params: { email: user?.email },
       });
+      console.log("Events Response:", res.data);
+      console.log("Events:", events);
+      console.log(Array.isArray(events));
       return res.data;
     },
     enabled: !!user?.email,
@@ -39,9 +43,8 @@ const MyEvents = () => {
 
       <div className="mb-8">
         <h2
-          className={`md:text-3xl text-2xl font-black tracking-tight ${
-            theme === "dark" ? "text-white" : "text-slate-900"
-          }`}
+          className={`md:text-3xl text-2xl font-black tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"
+            }`}
         >
           My Event Registrations
         </h2>
@@ -56,20 +59,18 @@ const MyEvents = () => {
         </div>
       ) : (
         <div
-          className={`overflow-hidden rounded-[2.5rem] border transition-all ${
-            theme === "dark"
+          className={`overflow-hidden rounded-[2.5rem] border transition-all ${theme === "dark"
               ? "bg-slate-900 border-slate-800"
               : "bg-white border-gray-100 shadow-xl shadow-gray-200/50"
-          }`}
+            }`}
         >
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead
-                className={`text-[10px] uppercase tracking-[0.2em] font-black border-b ${
-                  theme === "dark"
+                className={`text-[10px] uppercase tracking-[0.2em] font-black border-b ${theme === "dark"
                     ? "bg-slate-800/50 border-slate-800 text-slate-500"
                     : "bg-gray-50 border-gray-100 text-slate-400"
-                }`}
+                  }`}
               >
                 <tr>
                   <th className="p-6"> Event Name</th>
@@ -79,64 +80,64 @@ const MyEvents = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-500/10">
-                {events.map((event) => (
-                  <tr
-                    key={event._id}
-                    className="hover:bg-sky-500/5 transition-colors group"
-                  >
-                    {/* Event  */}
-                    <td className="p-6 max-w-[250px]">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 p-2 rounded-xl bg-sky-500/10 text-sky-500">
-                          <MdSchool size={18} />
+                {Array.isArray(events) &&
+                  events.map((event) => (
+                    <tr
+                      key={event._id}
+                      className="hover:bg-sky-500/5 transition-colors group"
+                    >
+                      {/* Event  */}
+                      <td className="p-6 max-w-[250px]">
+                        <div className=" flex items-start gap-3">
+                          <div className="mt-1 p-2 rounded-xl bg-sky-500/10 text-sky-500">
+                            <MdSchool size={18} />
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm leading-tight mb-1">
+                              {event.eventName}
+                            </p>
+                            <p className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
+                              {event.clubName}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-sm leading-tight mb-1">
-                            {event.eventName}
-                          </p>
-                          <p className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                            {event.clubName}
+                      </td>
+
+                      {/* Club */}
+                      <td className="p-6">
+                        <div className="flex items-start gap-2 opacity-80 italic text-sm max-w-xs">
+                          <MdChatBubbleOutline className="mt-1 shrink-0 text-slate-400" />
+                          <p className="line-clamp-2" title={event.clubName}>
+                            "{event.clubName}"
                           </p>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Club */}
-                    <td className="p-6">
-                      <div className="flex items-start gap-2 opacity-80 italic text-sm max-w-xs">
-                        <MdChatBubbleOutline className="mt-1 shrink-0 text-slate-400" />
-                        <p className="line-clamp-2" title={event.clubName}>
-                          "{event.clubName}"
-                        </p>
-                      </div>
-                    </td>
-
-                    {/* Date */}
-                    <td className="p-6">
+                      {/* Date */}
+                      {/* <td className="p-6">
                       <div className="flex items-center gap-1 text-[10px] font-bold opacity-60">
                         <MdEvent />{" "}
                         {new Date(event.eventDate).toLocaleDateString()}
                       </div>
-                    </td>
+                    </td> */}
 
-                    {/* Status */}
-                    <td className="p-6 text-right">
-                      <div className="flex justify-end gap-2">
-                         <span
-                className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${
-                  event.status === "completed"
-                    ? "bg-[#1b9023] text-white"
-                    : event.status === "processing"
-                    ? "bg-amber-500 text-white"
-                    : "bg-[#575656] text-white"
-                }`}
-              >
-                {event.status || "pending"}
-              </span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      {/* Status */}
+                      <td className="p-6 text-right">
+                        <div className="flex justify-end gap-2">
+                          <span
+                            className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg ${event.status === "completed"
+                                ? "bg-[#1b9023] text-white"
+                                : event.status === "processing"
+                                  ? "bg-amber-500 text-white"
+                                  : "bg-[#575656] text-white"
+                              }`}
+                          >
+                            {event.status || "pending"}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

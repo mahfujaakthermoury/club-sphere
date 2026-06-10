@@ -95,16 +95,18 @@ const AllClubs = () => {
 
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => {setCategory(e.target.value);
+              setPage(1);
+            }}
             className={`w-full px-5 py-3 rounded-xl border transition-all duration-300 outline-none
               ${theme === "dark"
                 ? "bg-[#1f1515] text-gray-300 border-[#3a2a2a] focus:border-[#cd974c] focus:ring-2 focus:ring-[#cd974c]/40"
                 : "bg-white text-[#682626] border-[#ecd9c6] focus:border-[#682626] focus:ring-2 focus:ring-[#682626]/30"
               }`}          >
             <option value="">All Categories</option>
-            <option value="Sports">Sports</option>
-            <option value="Tech">Tech</option>
-            <option value="Cultural">Cultural</option>
+            <option value="Fitness">Fitness</option>
+            <option value="Tech">Tech Club</option>
+            <option value="Photography">Photography</option>
           </select>
 
           <select
@@ -119,7 +121,7 @@ const AllClubs = () => {
                 ? "bg-[#1f1515] text-gray-300 border-[#3a2a2a] focus:border-[#cd974c] focus:ring-2 focus:ring-[#cd974c]/40"
                 : "bg-white text-[#682626] border-[#ecd9c6] focus:border-[#682626] focus:ring-2 focus:ring-[#682626]/30"
               }`}          >
-            <option value="-">Short By Size</option>
+            <option value="-">Sort By</option>
             <option value="membershipFee-asc">Fees (Low → High)</option>
             <option value="membershipFee-desc">Fees (High → Low)</option>
             <option value="createdAt-desc">Newest</option>
@@ -152,7 +154,12 @@ const AllClubs = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     alt="club"
                   />
-                  <div className="absolute inset-0 bg-liner-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-liner-to-t from-black/70 to-transparent"></div>
+
+            {/* Category Badge */}
+            <div className="absolute top-6 right-6 bg-[#cd974c] text-white text-xs font-bold px-4 py-1 rounded-full shadow-md">
+              {item?.category}
+            </div>
                 </div>
 
                 {/* Content */}
