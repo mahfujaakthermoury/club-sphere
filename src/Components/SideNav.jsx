@@ -143,7 +143,9 @@ const SideNav = ({ role }) => {
         className="flex items-center gap-3 px-2 py-2 rounded-xl font-bold text-[#d71313] hover:bg-[#cd974c]/10 hover:text-[#cd974c] transition-all duration-300"
       >
         <FiLogOut className="text-2xl" />
-        Logout
+        <span className="lg:flex hidden lg:text-sm xl:text-base tracking-tight">
+          Logout
+        </span>
       </button>
     </div>
 

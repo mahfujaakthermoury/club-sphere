@@ -24,7 +24,7 @@ const MainNav = () => {
     "text-[#714747] font-bold hover:text-[#e59e3b] transition duration-300";
 
   return (
-    <div className="w-full sticky top-0 z-50 bg-base-100 shadow-sm">
+    <div className="w-full fixed top-0 left-0 z-50 bg-base-100 shadow-sm">
       <div className="w-full max-w-7xl mx-auto flex justify-between items-center py-3">
         {/* Left Section */}
         <div className="flex items-center gap-6">

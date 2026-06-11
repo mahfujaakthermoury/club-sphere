@@ -218,7 +218,7 @@ const AllEvents = () => {
                   {/* Button */}
                   <div className="flex  pt-6 border-t border-[#3a2a2a]/30">
               <button
-                onClick={() => navigate("/payment")}
+                onClick={() => navigate("/payment", { state: { event: item  } })}
                 className="w-full border-2 border-[#682626] text-[#cd974c] px-10 py-3 rounded-full font-bold hover:bg-[#682626] hover:text-white transition-all duration-300"
               >
                 Registration Now

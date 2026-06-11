@@ -31,11 +31,14 @@ const CheckoutForm = () => {
   const { user, theme } = useContext(WebContext);
 
   const location = useLocation();
+  console.log("STATE:", location.state);
+
   const club = location.state?.club;
+  const event = location.state?.event;
 
   const [loading, setLoading] = useState(false);
 
-  if (!club) {
+  if (!club && !event) {
     return (
       <div className="text-center py-20 opacity-60 font-bold">
         Invalid payment request.
@@ -43,7 +46,7 @@ const CheckoutForm = () => {
     );
   }
 
-  const totalAmount = Number(club.membershipFee || 0);
+  const totalAmount = Number(club?.membershipFee ?? event?.eventFee ?? 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,18 +56,36 @@ const CheckoutForm = () => {
 
       // FREE CLUB REGISTRATION
       if (totalAmount === 0) {
-        await axiosPublic.post("/payments", {
-          clubId: club._id,
-          clubName: club.clubName,
-          amount: 0,
-          transactionId: "FREE_MEMBER_" + Date.now(),
-          email: user?.email,
-        });
+        if (club) {
+          await axiosPublic.post("/payments", {
+            clubId: club?._id,
+            clubName: club?.clubName,
+            amount: 0,
+            transactionId: "FREE_MEMBER_" + Date.now(),
+            email: user?.email,
+          });
+        }
+
+        if (event) {
+          await axiosPublic.post("/payments", {
+            eventId: event?._id,
+            eventName: event?.eventName,
+            amount: 0,
+            transactionId: "FREE_REGISTRATION_" + Date.now(),
+            email: user?.email,
+          });
+        }
 
         toast.success("Registration successful!");
 
         navigate("/payment-success", {
           state: { club },
+        });
+
+        navigate("/payment-success", {
+          state: {
+            event: event || location.state?.event,
+          },
         });
 
         return;
@@ -78,7 +99,8 @@ const CheckoutForm = () => {
 
       const { data } = await axiosPublic.post("/create-payment-intent", {
         amount: totalAmount,
-        clubId: club._id,
+        clubId: club?._id,
+        eventId: event?._id,
       });
 
       const clientSecret = data.clientSecret;
@@ -107,13 +129,19 @@ const CheckoutForm = () => {
           state: { club },
         });
 
+        navigate("/payment-failed", {
+          state: { event },
+        });
+
         return;
       }
 
       if (result.paymentIntent?.status === "succeeded") {
         await axiosPublic.post("/payments", {
-          clubId: club._id,
-          clubName: club.clubName,
+          clubId: club?._id,
+          clubName: club?.clubName,
+          eventId: event?._id,
+          eventName: event?.eventName,
           amount: totalAmount,
           transactionId: result.paymentIntent.id,
           email: user?.email,
@@ -121,9 +149,16 @@ const CheckoutForm = () => {
 
         toast.success("Payment successful!");
 
-        navigate("/payment-success", {
-          state: { club },
-        });
+        if (club) {
+          navigate("/payment-success", {
+            state: { club },
+          });
+        } else if (event) {
+          navigate("/payment-success", {
+            state: { event },
+          });
+        }
+
       }
     } catch (error) {
       console.log(error);
@@ -145,8 +180,8 @@ const CheckoutForm = () => {
 
       <div
         className={`rounded-4xl border overflow-hidden transition-all duration-300 ${theme === "dark"
-            ? "bg-slate-900 border-slate-800"
-            : "bg-white border-gray-100 shadow-xl"
+          ? "bg-slate-900 border-slate-800"
+          : "bg-white border-gray-100 shadow-xl"
           }`}
       >
         <div className="p-8">
@@ -155,12 +190,23 @@ const CheckoutForm = () => {
               <Payment />
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold opacity-50">
-                Club Application
-              </p>
-              <h3 className="md:text-xl text-lg font-bold">
-                {club.clubName}
-              </h3>
+              {club && (
+                <p className="text-[10px] uppercase font-bold opacity-50">
+                  Club Application
+                </p>
+              )}
+              {club && (
+                <h3 className="md:text-xl text-lg font-bold">{club.clubName}</h3>
+              )}
+
+              {event && (
+                <p className="text-[10px] uppercase font-bold opacity-50">
+                  Event Registration
+                </p>
+              )}
+              {event && (
+                <h3 className="md:text-xl text-lg font-bold">{event.eventName}</h3>
+              )}
             </div>
           </div>
 
@@ -168,26 +214,49 @@ const CheckoutForm = () => {
 
           {/* Pricing Details*/}
           <div className="space-y-3 mb-8">
-            <div className="flex justify-between items-center opacity-70">
-              <span className="sm:text-lg text-sm">Membership Fees</span>
-              <span className="font-bold">
-                ${club.membershipFee || 0}
-              </span>
-            </div>
-            <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-slate-800">
-              <span className="sm:text-lg text-sm font-bold">Total Amount</span>
-              <span className="text-2xl font-black text-[#682626]">
-                ${totalAmount}
-              </span>
-            </div>
+            {club && (
+              <div>
+                <div className="flex justify-between items-center opacity-70">
+                  <span className="sm:text-lg text-sm">Membership Fees</span>
+                  <span className="font-bold">
+                    ${club?.membershipFee || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-slate-800">
+                  <span className="sm:text-lg text-sm font-bold">Total Amount</span>
+                  <span className="text-2xl font-black text-[#682626]">
+                    ${totalAmount}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3 mb-8">
+            {event && (
+              <div>
+                <div className="flex justify-between items-center opacity-70">
+                  <span className="sm:text-lg text-sm">Event Registration Fees</span>
+                  <span className="font-bold">
+                    ${event?.eventFee || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-slate-800">
+                  <span className="sm:text-lg text-sm font-bold">Total Amount</span>
+                  <span className="text-2xl font-black text-[#682626]">
+                    ${totalAmount}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {totalAmount > 0 && (
               <div
                 className={`p-4 rounded-2xl border transition-all ${theme === "dark"
-                    ? "bg-slate-800 border-slate-700"
-                    : "bg-gray-50 border-gray-200"
+                  ? "bg-slate-800 border-slate-700"
+                  : "bg-gray-50 border-gray-200"
                   }`}
               >
                 <CardElement
@@ -233,8 +302,8 @@ const CheckoutPayment = () => {
   return (
     <div
       className={`w-full min-h-screen py-16 transition-colors duration-300 ${theme === "dark"
-          ? "bg-slate-950 text-gray-300"
-          : "bg-gray-50 text-gray-700"
+        ? "bg-slate-950 text-gray-300"
+        : "bg-gray-50 text-gray-700"
         }`}
     >
       <HeadProvider>

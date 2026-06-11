@@ -110,7 +110,7 @@
               <ul className="flex items-center gap-4">
                 <li>
                   <a
-                    href="#"
+                    href="https://x.com/"
                     className="w-10 h-10 rounded-full bg-[#714747] border border-white/10 flex items-center justify-center text-[white] hover:bg-[#e59e3b]  transition-all duration-300 shadow-lg"
                   >
                     <FaXTwitter size={18} />
@@ -118,7 +118,7 @@
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://www.linkedin.com/"
                     className="w-10 h-10 rounded-full bg-[#714747] border border-white/10 flex items-center justify-center text-white hover:bg-[#e59e3b] transition-all duration-300 shadow-lg"
                   >
                     <FaLinkedinIn size={18} />
@@ -126,7 +126,7 @@
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://www.facebook.com/"
                     className="w-10 h-10 rounded-full bg-[#714747] border border-white/10 flex items-center justify-center text-white hover:bg-[#e59e3b] transition-all duration-300 shadow-lg"
                   >
                     <FaFacebookF size={18} />
@@ -134,7 +134,7 @@
                 </li>
                 <li>
                   <a
-                    href="mailto:info@ClubSphere.com"
+                    href="https://mail.google.com/"
                     className="w-10 h-10 rounded-full bg-[#714747] border border-white/10 flex items-center justify-center text-white hover:bg-[#e59e3b] transition-all duration-300 shadow-lg"
                   >
                     <FaEnvelope size={18} />

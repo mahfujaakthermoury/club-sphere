@@ -7,8 +7,8 @@ import useAxiosPublic from "../../../../Hook/useAxiosPublic";
 import DataLoader from "../../../../Components/DataLoader";
 import { HeadProvider, Title } from "react-head";
 import {
-  MdSchool,
   MdEvent,
+  // MdDate,
   MdChatBubbleOutline,
 } from "react-icons/md";
 
@@ -89,15 +89,15 @@ const MyEvents = () => {
                       {/* Event  */}
                       <td className="p-6 max-w-[250px]">
                         <div className=" flex items-start gap-3">
-                          <div className="mt-1 p-2 rounded-xl bg-sky-500/10 text-sky-500">
-                            <MdSchool size={18} />
+                          <div className="mt-1 p-2 rounded-xl bg-amber-500/10 text-amber-700">
+                            <MdEvent size={18} />
                           </div>
                           <div>
                             <p className="font-bold text-sm leading-tight mb-1">
                               {event.eventName}
                             </p>
                             <p className="text-[10px] uppercase font-black opacity-50 tracking-tighter">
-                              {event.clubName}
+                              {event.location}
                             </p>
                           </div>
                         </div>
@@ -114,12 +114,12 @@ const MyEvents = () => {
                       </td>
 
                       {/* Date */}
-                      {/* <td className="p-6">
+                      <td className="p-6">
                       <div className="flex items-center gap-1 text-[10px] font-bold opacity-60">
-                        <MdEvent />{" "}
-                        {new Date(event.eventDate).toLocaleDateString()}
+                        {/* <MdDate />{" "} */}
+                        {new Date(event.registeredAt).toLocaleDateString()}
                       </div>
-                    </td> */}
+                    </td>
 
                       {/* Status */}
                       <td className="p-6 text-right">

@@ -6,7 +6,7 @@ const Main = () => {
   return (
     <div className="w-full">
       <MainNav></MainNav>
-      <div className="py-8"></div>
+      <div className="py-8 pt-30"></div>
       <Outlet></Outlet>
       <Footer></Footer>
     </div>
